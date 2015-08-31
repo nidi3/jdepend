@@ -4,7 +4,7 @@ Changes from the original: [![Build Status](https://travis-ci.org/nidi3/jdepend.
  - Support Java 8 class files (https://github.com/clarkware/jdepend/issues/7)
  - Add hamcrest matchers
  - Use generics
-
+ - Mavenize
 
 ```
 
