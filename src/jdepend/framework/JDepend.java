@@ -241,6 +241,10 @@ public class JDepend {
      *         constraint
      */
     public boolean dependencyMatch(DependencyConstraint constraint) {
+        return constraint.match(getPackages()).matches();
+    }
+
+    public DependencyConstraint.MatchResult analyzeDependencies(DependencyConstraint constraint) {
         return constraint.match(getPackages());
     }
 
