@@ -1,20 +1,20 @@
 package jdepend.framework;
 
+import junit.framework.TestCase;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 /**
- * The <code>ExampleTest</code> is an example <code>TestCase</code> 
- * that demonstrates tests for measuring the distance from the 
- * main sequence (D), package dependency constraints, and the 
+ * The <code>ExampleTest</code> is an example <code>TestCase</code>
+ * that demonstrates tests for measuring the distance from the
+ * main sequence (D), package dependency constraints, and the
  * existence of cyclic package dependencies.
- * <p>
+ * <p/>
  * This test analyzes the JDepend class files.
- * 
+ *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
@@ -41,14 +41,15 @@ public class ExampleTest extends TestCase {
         filter.addPackage("javax.*");
         jdepend = new JDepend(filter);
 
-        String classesDir = 
-            jdependHomeDirectory + File.separator + "build";
+        String classesDir = jdependHomeDirectory + File.separator + "target/classes";
+        String testClassesDir = jdependHomeDirectory + File.separator + "target/test-classes";
 
         jdepend.addDirectory(classesDir);
+        jdepend.addDirectory(testClassesDir);
     }
 
     /**
-     * Tests the conformance of a single package to a distance 
+     * Tests the conformance of a single package to a distance
      * from the main sequence (D) within a tolerance.
      */
     public void testOnePackageDistance() {
@@ -60,12 +61,12 @@ public class ExampleTest extends TestCase {
 
         JavaPackage p = jdepend.getPackage("jdepend.framework");
 
-        assertEquals("Distance exceeded: " + p.getName(), 
-                     ideal, p.distance(), tolerance);
+        assertEquals("Distance exceeded: " + p.getName(),
+                ideal, p.distance(), tolerance);
     }
 
     /**
-     * Tests that a single package does not contain any 
+     * Tests that a single package does not contain any
      * package dependency cycles.
      */
     public void testOnePackageHasNoCycles() {
@@ -74,12 +75,12 @@ public class ExampleTest extends TestCase {
 
         JavaPackage p = jdepend.getPackage("jdepend.framework");
 
-        assertEquals("Cycles exist: " + p.getName(), 
-                     false, p.containsCycle());
+        assertEquals("Cycles exist: " + p.getName(),
+                false, p.containsCycle());
     }
 
     /**
-     * Tests the conformance of all analyzed packages to a 
+     * Tests the conformance of all analyzed packages to a
      * distance from the main sequence (D) within a tolerance.
      */
     public void testAllPackagesDistance() {
@@ -89,15 +90,15 @@ public class ExampleTest extends TestCase {
 
         Collection packages = jdepend.analyze();
 
-        for (Iterator iter = packages.iterator(); iter.hasNext();) {
-            JavaPackage p = (JavaPackage)iter.next();
-            assertEquals("Distance exceeded: " + p.getName(), 
-                         ideal, p.distance(), tolerance);
+        for (Iterator iter = packages.iterator(); iter.hasNext(); ) {
+            JavaPackage p = (JavaPackage) iter.next();
+            assertEquals("Distance exceeded: " + p.getName(),
+                    ideal, p.distance(), tolerance);
         }
     }
 
     /**
-     * Tests that a package dependency cycle does not exist 
+     * Tests that a package dependency cycle does not exist
      * for any of the analyzed packages.
      */
     public void testAllPackagesHaveNoCycles() {
@@ -108,10 +109,10 @@ public class ExampleTest extends TestCase {
     }
 
     /**
-     * Tests that a package dependency constraint is matched 
+     * Tests that a package dependency constraint is matched
      * for the analyzed packages.
-     * <p>
-     * Fails if any package dependency other than those declared 
+     * <p/>
+     * Fails if any package dependency other than those declared
      * in the dependency constraints are detected.
      */
     public void testDependencyConstraint() {
@@ -144,8 +145,8 @@ public class ExampleTest extends TestCase {
 
         jdepend.analyze();
 
-        assertEquals("Constraint mismatch", 
-                     true, jdepend.dependencyMatch(constraint));
+        assertEquals("Constraint mismatch",
+                true, jdepend.dependencyMatch(constraint));
     }
 
     public static void main(String[] args) {

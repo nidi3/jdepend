@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>guru.nidi</groupId>
+        <artifactId>guru-nidi-parent-pom</artifactId>
+        <version>1.0.4</version>
+    </parent>
+
+    <artifactId>jdepend</artifactId>
+    <version>2.9.2</version>
+
+    <name>${project.artifactId}</name>
+    <description>A fork to the jdepend project which applies bugfixes.</description>
+    <url>https://github.com/nidi3/jdepend</url>
+    <inceptionYear>2015</inceptionYear>
+
+    <scm>
+        <connection>scm:git:https://github.com/nidi3/jdepend</connection>
+        <developerConnection>scm:git:https://github.com/nidi3/jdepend</developerConnection>
+        <url>https://github.com/nidi3/jdepend</url>
+    </scm>
+
+    <properties>
+        <java.version>1.5</java.version>
+    </properties>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
+        <testResources>
+            <testResource>
+                <directory>test/data</directory>
+                <targetPath>data</targetPath>
+            </testResource>
+        </testResources>
+        <plugins>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

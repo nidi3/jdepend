@@ -45,7 +45,7 @@ public class ClassFileParserTest extends JDependTestCase {
 
     public void testInterfaceClass() throws IOException {
 
-        File f = new File(getBuildDir() + getPackageSubDir() +
+        File f = new File(getTestBuildDir() + getPackageSubDir() +
                           "ExampleInterface.class");
         
         JavaClass clazz = parser.parse(f);
@@ -69,7 +69,7 @@ public class ClassFileParserTest extends JDependTestCase {
 
     public void testAbstractClass() throws IOException {
 
-        File f = new File(getBuildDir() + getPackageSubDir() +
+        File f = new File(getTestBuildDir() + getPackageSubDir() +
                           "ExampleAbstractClass.class");
         
         JavaClass clazz = parser.parse(f);
@@ -94,7 +94,7 @@ public class ClassFileParserTest extends JDependTestCase {
 
     public void testConcreteClass() throws IOException {
 
-        File f = new File(getBuildDir() + getPackageSubDir() +
+        File f = new File(getTestBuildDir()+ getPackageSubDir() +
                           "ExampleConcreteClass.class");
         
         JavaClass clazz = parser.parse(f);
@@ -133,7 +133,7 @@ public class ClassFileParserTest extends JDependTestCase {
 
     public void testInnerClass() throws IOException {
 
-        File f = new File(getBuildDir() + getPackageSubDir() +
+        File f = new File(getTestBuildDir() + getPackageSubDir() +
                           "ExampleConcreteClass$ExampleInnerClass.class");
         
         JavaClass clazz = parser.parse(f);
@@ -154,7 +154,7 @@ public class ClassFileParserTest extends JDependTestCase {
 
     public void testPackageClass() throws IOException {
 
-        File f = new File(getBuildDir() + getPackageSubDir() +
+        File f = new File(getTestBuildDir() + getPackageSubDir() +
                           "ExamplePackageClass.class");
         
         JavaClass clazz = parser.parse(f);
