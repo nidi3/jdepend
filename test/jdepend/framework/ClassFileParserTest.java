@@ -20,7 +20,7 @@ public class ClassFileParserTest extends JDependTestCase {
 
     protected void setUp() {
         super.setUp();
-        PackageFilter filter = new PackageFilter(new ArrayList());
+        PackageFilter filter = new PackageFilter(new ArrayList<String>());
         parser = new ClassFileParser(filter);
     }
 
@@ -29,25 +29,19 @@ public class ClassFileParserTest extends JDependTestCase {
     }
 
     public void testInvalidClassFile() {
-
-        File f = new File(getTestDir() + getPackageSubDir() + 
-                          "ExampleTest.java");
+        File f = new File(getTestDir() + getPackageSubDir() + "ExampleTest.java");
 
         try {
-
             parser.parse(f);
             fail("Invalid class file: Should raise IOException");
-
         } catch (IOException expected) {
             assertTrue(true);
         }
     }
 
     public void testInterfaceClass() throws IOException {
+        File f = new File(getTestBuildDir() + getPackageSubDir() + "ExampleInterface.class");
 
-        File f = new File(getTestBuildDir() + getPackageSubDir() +
-                          "ExampleInterface.class");
-        
         JavaClass clazz = parser.parse(f);
 
         assertTrue(clazz.isAbstract());
@@ -69,9 +63,8 @@ public class ClassFileParserTest extends JDependTestCase {
 
     public void testAbstractClass() throws IOException {
 
-        File f = new File(getTestBuildDir() + getPackageSubDir() +
-                          "ExampleAbstractClass.class");
-        
+        File f = new File(getTestBuildDir() + getPackageSubDir() + "ExampleAbstractClass.class");
+
         JavaClass clazz = parser.parse(f);
 
         assertTrue(clazz.isAbstract());
@@ -94,9 +87,8 @@ public class ClassFileParserTest extends JDependTestCase {
 
     public void testConcreteClass() throws IOException {
 
-        File f = new File(getTestBuildDir()+ getPackageSubDir() +
-                          "ExampleConcreteClass.class");
-        
+        File f = new File(getTestBuildDir() + getPackageSubDir() + "ExampleConcreteClass.class");
+
         JavaClass clazz = parser.parse(f);
 
         assertFalse(clazz.isAbstract());
@@ -117,7 +109,7 @@ public class ClassFileParserTest extends JDependTestCase {
         assertTrue(imports.contains(new JavaPackage("java.util")));
         assertTrue(imports.contains(new JavaPackage("java.util.jar")));
         assertTrue(imports.contains(new JavaPackage("java.math")));
-        
+
         // annotations
         assertTrue(imports.contains(new JavaPackage("org.junit.runners")));
         assertTrue(imports.contains(new JavaPackage("java.applet")));
@@ -134,8 +126,8 @@ public class ClassFileParserTest extends JDependTestCase {
     public void testInnerClass() throws IOException {
 
         File f = new File(getTestBuildDir() + getPackageSubDir() +
-                          "ExampleConcreteClass$ExampleInnerClass.class");
-        
+                "ExampleConcreteClass$ExampleInnerClass.class");
+
         JavaClass clazz = parser.parse(f);
 
         assertFalse(clazz.isAbstract());
@@ -155,8 +147,8 @@ public class ClassFileParserTest extends JDependTestCase {
     public void testPackageClass() throws IOException {
 
         File f = new File(getTestBuildDir() + getPackageSubDir() +
-                          "ExamplePackageClass.class");
-        
+                "ExamplePackageClass.class");
+
         JavaClass clazz = parser.parse(f);
 
         assertFalse(clazz.isAbstract());
@@ -171,14 +163,14 @@ public class ClassFileParserTest extends JDependTestCase {
         assertTrue(imports.contains(new JavaPackage("java.lang")));
 
     }
-    
+
     public void testExampleClassFileFromTimDrury() throws IOException {
         // see http://github.com/clarkware/jdepend/issues#issue/1
         parser.parse(ClassFileParser.class.getResourceAsStream("/data/example_class1.bin"));
-	}
-    
+    }
+
     public void testExampleClassFile2() throws IOException {
         parser.parse(ClassFileParser.class.getResourceAsStream("/data/example_class2.bin"));
-	}
+    }
 }
 

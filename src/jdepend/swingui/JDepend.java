@@ -1,25 +1,26 @@
 package jdepend.swingui;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
+import jdepend.framework.*;
 
-import jdepend.framework.JavaClass;
-import jdepend.framework.JavaPackage;
-import jdepend.framework.PackageComparator;
-import jdepend.framework.PackageFilter;
-import jdepend.framework.ParserListener;
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 /**
  * The <code>JDepend</code> class analyzes directories of Java class files,
  * generates metrics for each Java package, and reports the metrics in a Swing
  * tree.
- * 
+ *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
@@ -40,9 +41,9 @@ public class JDepend implements ParserListener {
 
     private DependTree efferentTree;
 
-    private Hashtable resourceStrings;
+    private Hashtable<String, String> resourceStrings;
 
-    private Hashtable actions;
+    private Hashtable<String, Action> actions;
 
     private static Font BOLD_FONT = new Font("dialog", Font.BOLD, 12);
 
@@ -69,14 +70,14 @@ public class JDepend implements ParserListener {
         //
         // Install the resource string table.
         //
-        resourceStrings = new Hashtable();
+        resourceStrings = new Hashtable<String, String>();
         resourceStrings.put("menubar", "File");
         resourceStrings.put("File", "About Exit");
 
         //
         // Install the action table.
         //
-        actions = new Hashtable();
+        actions = new Hashtable<String, Action>();
         actions.put("About", new AboutAction());
         actions.put("Exit", new ExitAction());
     }
@@ -84,7 +85,7 @@ public class JDepend implements ParserListener {
     /**
      * Adds the specified directory name to the collection of directories to be
      * analyzed.
-     * 
+     *
      * @param name Directory name.
      * @throws IOException If the directory does not exist.
      */
@@ -94,7 +95,7 @@ public class JDepend implements ParserListener {
 
     /**
      * Sets the package filter.
-     * 
+     *
      * @param filter Package filter.
      */
     public void setFilter(PackageFilter filter) {
@@ -107,7 +108,7 @@ public class JDepend implements ParserListener {
     public void setComponents(String components) {
         analyzer.setComponents(components);
     }
-    
+
     /**
      * Analyzes the registered directories, generates metrics for each Java
      * package, and reports the metrics in a graphical format.
@@ -118,10 +119,9 @@ public class JDepend implements ParserListener {
 
         startProgressMonitor(analyzer.countClasses());
 
-        ArrayList packages = new ArrayList(analyzer.analyze());
+        List<JavaPackage> packages = new ArrayList<JavaPackage>(analyzer.analyze());
 
-        Collections.sort(packages, new PackageComparator(PackageComparator
-                .byName()));
+        Collections.sort(packages, new PackageComparator(PackageComparator.byName()));
 
         stopProgressMonitor();
 
@@ -131,7 +131,7 @@ public class JDepend implements ParserListener {
     /**
      * Called whenever a Java source file is parsed into the specified
      * <code>JavaClass</code> instance.
-     * 
+     *
      * @param jClass Parsed Java class.
      */
     public void onParsedJavaClass(final JavaClass jClass) {
@@ -148,7 +148,7 @@ public class JDepend implements ParserListener {
         frame.setVisible(true);
     }
 
-    private void updateTree(ArrayList packages) {
+    private void updateTree(List<JavaPackage> packages) {
 
         JavaPackage jPackage = new JavaPackage("root");
         jPackage.setAfferents(packages);
@@ -279,9 +279,9 @@ public class JDepend implements ParserListener {
 
         JMenuBar menuBar = new JMenuBar();
 
-        String[] menuKeys = tokenize((String) resourceStrings.get("menubar"));
-        for (int i = 0; i < menuKeys.length; i++) {
-            JMenu m = createMenu(menuKeys[i]);
+        String[] menuKeys = tokenize(resourceStrings.get("menubar"));
+        for (String menuKey : menuKeys) {
+            JMenu m = createMenu(menuKey);
             if (m != null) {
                 menuBar.add(m);
             }
@@ -292,13 +292,13 @@ public class JDepend implements ParserListener {
 
     private JMenu createMenu(String key) {
 
-        String[] itemKeys = tokenize((String) resourceStrings.get(key));
+        String[] itemKeys = tokenize(resourceStrings.get(key));
         JMenu menu = new JMenu(key);
-        for (int i = 0; i < itemKeys.length; i++) {
-            if (itemKeys[i].equals("-")) {
+        for (String itemKey : itemKeys) {
+            if (itemKey.equals("-")) {
                 menu.addSeparator();
             } else {
-                JMenuItem mi = createMenuItem(itemKeys[i]);
+                JMenuItem mi = createMenuItem(itemKey);
                 menu.add(mi);
             }
         }
@@ -317,13 +317,11 @@ public class JDepend implements ParserListener {
         mi.setMnemonic(mnemonic);
 
         char accelerator = key.charAt(0);
-        mi.setAccelerator(KeyStroke.getKeyStroke(accelerator,
-                java.awt.Event.CTRL_MASK));
+        mi.setAccelerator(KeyStroke.getKeyStroke(accelerator, InputEvent.CTRL_MASK));
 
-        String actionString = key;
-        mi.setActionCommand(actionString);
+        mi.setActionCommand(key);
 
-        Action a = getActionForCommand(actionString);
+        Action a = getActionForCommand(key);
         if (a != null) {
             mi.addActionListener(a);
             mi.setEnabled(a.isEnabled());
@@ -387,7 +385,7 @@ public class JDepend implements ParserListener {
     }
 
     private Action getActionForCommand(String command) {
-        return (Action) actions.get(command);
+        return actions.get(command);
     }
 
     /*
@@ -396,7 +394,7 @@ public class JDepend implements ParserListener {
      */
     private String[] tokenize(String input) {
 
-        Vector v = new Vector();
+        Vector<String> v = new Vector<String>();
         StringTokenizer t = new StringTokenizer(input);
 
         while (t.hasMoreTokens()) {
@@ -405,7 +403,7 @@ public class JDepend implements ParserListener {
 
         String cmd[] = new String[v.size()];
         for (int i = 0; i < cmd.length; i++) {
-            cmd[i] = (String) v.elementAt(i);
+            cmd[i] = v.elementAt(i);
         }
 
         return cmd;
@@ -443,7 +441,7 @@ public class JDepend implements ParserListener {
         /**
          * Callback method triggered whenever the value of the tree selection
          * changes.
-         * 
+         *
          * @param te Event that characterizes the change.
          */
         public void valueChanged(TreeSelectionEvent te) {
@@ -511,7 +509,7 @@ public class JDepend implements ParserListener {
         System.err.println("");
         System.err.println("usage: ");
         System.err.println(baseUsage + "-components <components> " +
-            "<directory> [directory2 [directory 3] ...]");
+                "<directory> [directory2 [directory 3] ...]");
         System.exit(1);
     }
 
@@ -542,7 +540,7 @@ public class JDepend implements ParserListener {
                 }
             }
         }
-        
+
         if (directoryCount == 0) {
             usage("Must specify at least one directory.");
         }

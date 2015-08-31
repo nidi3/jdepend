@@ -16,7 +16,7 @@ public class DependTreeModel implements TreeModel {
 
     private PackageNode root;
 
-    private Vector listeners;
+    private Vector<TreeModelListener> listeners;
 
     /**
      * Constructs a <code>DependTreeModel</code> with the specified root
@@ -26,7 +26,7 @@ public class DependTreeModel implements TreeModel {
      */
     public DependTreeModel(PackageNode root) {
         this.root = root;
-        listeners = new Vector();
+        listeners = new Vector<TreeModelListener>();
     }
 
     /**
@@ -53,7 +53,7 @@ public class DependTreeModel implements TreeModel {
     public Object getChild(Object parent, int index) {
 
         Object answer = null;
-        ArrayList children;
+        List<PackageNode> children;
 
         if (parent instanceof PackageNode) {
             children = ((PackageNode) parent).getChildren();
@@ -81,7 +81,7 @@ public class DependTreeModel implements TreeModel {
     public int getChildCount(Object parent) {
 
         int answer = 0;
-        ArrayList children;
+        List<PackageNode> children;
 
         if (parent instanceof PackageNode) {
             children = ((PackageNode) parent).getChildren();
@@ -133,7 +133,7 @@ public class DependTreeModel implements TreeModel {
      */
     public int getIndexOfChild(Object parent, Object child) {
         int answer = -1;
-        ArrayList children = null;
+        List<PackageNode> children;
 
         if (parent instanceof PackageNode) {
             children = ((PackageNode) parent).getChildren();

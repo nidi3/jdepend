@@ -103,7 +103,7 @@ public class DependencyMatchers {
 
             @Override
             protected boolean matchesSafely(JDepend item) {
-                for (JavaPackage pack : (Collection<JavaPackage>) item.getPackages()) {
+                for (JavaPackage pack : item.getPackages()) {
                     if (pack.getName().startsWith(packageFilter)) {
                         if (pack.distance() > maxDistance) {
                             problem = pack;
@@ -130,7 +130,7 @@ public class DependencyMatchers {
                 .append("Name                                      abst  inst  dist\n")
                 .append("----------------------------------------------------------\n");
         final Formatter formatter = new Formatter(s);
-        for (JavaPackage pack : (Collection<JavaPackage>) depend.getPackages()) {
+        for (JavaPackage pack : depend.getPackages()) {
             if (pack.getName().startsWith(packageFilter)) {
                 formatter.format("%-40s: %-1.2f  %-1.2f  %-1.2f%n", pack.getName(), pack.abstractness(), pack.instability(), pack.distance());
             }

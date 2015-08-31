@@ -4,7 +4,7 @@ import java.util.*;
 
 /**
  * The <code>JavaPackage</code> class represents a Java package.
- * 
+ *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
@@ -13,9 +13,9 @@ public class JavaPackage {
 
     private String name;
     private int volatility;
-    private HashSet classes;
-    private List afferents;
-    private List efferents;
+    private Set<JavaClass> classes;
+    private List<JavaPackage> afferents;
+    private List<JavaPackage> efferents;
 
 
     public JavaPackage(String name) {
@@ -25,9 +25,9 @@ public class JavaPackage {
     public JavaPackage(String name, int volatility) {
         this.name = name;
         setVolatility(volatility);
-        classes = new HashSet();
-        afferents = new ArrayList();
-        efferents = new ArrayList();
+        classes = new HashSet<JavaClass>();
+        afferents = new ArrayList<JavaPackage>();
+        efferents = new ArrayList<JavaPackage>();
     }
 
     public String getName() {
@@ -49,19 +49,19 @@ public class JavaPackage {
     }
 
     public boolean containsCycle() {
-        return collectCycle(new ArrayList());
+        return collectCycle(new ArrayList<JavaPackage>());
     }
 
     /**
      * Collects the packages participating in the first package dependency cycle
      * detected which originates from this package.
-     * 
+     *
      * @param list Collecting object to be populated with the list of
-     *            JavaPackage instances in a cycle.
+     *             JavaPackage instances in a cycle.
      * @return <code>true</code> if a cycle exist; <code>false</code>
-     *         otherwise.
+     * otherwise.
      */
-    public boolean collectCycle(List list) {
+    public boolean collectCycle(List<JavaPackage> list) {
 
         if (list.contains(this)) {
             list.add(this);
@@ -70,8 +70,7 @@ public class JavaPackage {
 
         list.add(this);
 
-        for (Iterator i = getEfferents().iterator(); i.hasNext();) {
-            JavaPackage efferent = (JavaPackage)i.next();
+        for (JavaPackage efferent : getEfferents()) {
             if (efferent.collectCycle(list)) {
                 return true;
             }
@@ -85,16 +84,16 @@ public class JavaPackage {
     /**
      * Collects all the packages participating in a package dependency cycle
      * which originates from this package.
-     * <p>
+     * <p/>
      * This is a more exhaustive search than that employed by
      * <code>collectCycle</code>.
-     * 
+     *
      * @param list Collecting object to be populated with the list of
-     *            JavaPackage instances in a cycle.
+     *             JavaPackage instances in a cycle.
      * @return <code>true</code> if a cycle exist; <code>false</code>
-     *         otherwise.
+     * otherwise.
      */
-    public boolean collectAllCycles(List list) {
+    public boolean collectAllCycles(List<JavaPackage> list) {
 
         if (list.contains(this)) {
             list.add(this);
@@ -104,8 +103,7 @@ public class JavaPackage {
         list.add(this);
 
         boolean containsCycle = false;
-        for (Iterator i = getEfferents().iterator(); i.hasNext();) {
-            JavaPackage efferent = (JavaPackage)i.next();
+        for (JavaPackage efferent : getEfferents()) {
             if (efferent.collectAllCycles(list)) {
                 containsCycle = true;
             }
@@ -114,7 +112,7 @@ public class JavaPackage {
         if (containsCycle) {
             return true;
         }
-        
+
         list.remove(this);
         return false;
     }
@@ -123,7 +121,7 @@ public class JavaPackage {
         classes.add(clazz);
     }
 
-    public Collection getClasses() {
+    public Collection<JavaClass> getClasses() {
         return classes;
     }
 
@@ -134,8 +132,7 @@ public class JavaPackage {
     public int getAbstractClassCount() {
         int count = 0;
 
-        for (Iterator i = classes.iterator(); i.hasNext();) {
-            JavaClass clazz = (JavaClass)i.next();
+        for (JavaClass clazz : classes) {
             if (clazz.isAbstract()) {
                 count++;
             }
@@ -147,8 +144,7 @@ public class JavaPackage {
     public int getConcreteClassCount() {
         int count = 0;
 
-        for (Iterator i = classes.iterator(); i.hasNext();) {
-            JavaClass clazz = (JavaClass)i.next();
+        for (JavaClass clazz : classes) {
             if (!clazz.isAbstract()) {
                 count++;
             }
@@ -158,9 +154,9 @@ public class JavaPackage {
     }
 
     /**
-     * Adds the specified Java package as an efferent of this package 
+     * Adds the specified Java package as an efferent of this package
      * and adds this package as an afferent of it.
-     * 
+     *
      * @param imported Java package.
      */
     public void dependsUpon(JavaPackage imported) {
@@ -170,7 +166,7 @@ public class JavaPackage {
 
     /**
      * Adds the specified Java package as an afferent of this package.
-     * 
+     *
      * @param jPackage Java package.
      */
     public void addAfferent(JavaPackage jPackage) {
@@ -181,12 +177,12 @@ public class JavaPackage {
         }
     }
 
-    public Collection getAfferents() {
+    public Collection<JavaPackage> getAfferents() {
         return afferents;
     }
 
-    public void setAfferents(Collection afferents) {
-        this.afferents = new ArrayList(afferents);
+    public void setAfferents(Collection<JavaPackage> afferents) {
+        this.afferents = new ArrayList<JavaPackage>(afferents);
     }
 
     public void addEfferent(JavaPackage jPackage) {
@@ -197,12 +193,12 @@ public class JavaPackage {
         }
     }
 
-    public Collection getEfferents() {
+    public Collection<JavaPackage> getEfferents() {
         return efferents;
     }
 
-    public void setEfferents(Collection efferents) {
-        this.efferents = new ArrayList(efferents);
+    public void setEfferents(Collection<JavaPackage> efferents) {
+        this.efferents = new ArrayList<JavaPackage>(efferents);
     }
 
     /**
@@ -228,7 +224,7 @@ public class JavaPackage {
                 + (float) afferentCoupling();
 
         if (totalCoupling > 0) {
-            return efferentCoupling()/totalCoupling;
+            return efferentCoupling() / totalCoupling;
         }
 
         return 0;
@@ -265,8 +261,8 @@ public class JavaPackage {
     public int hashCode() {
         return getName().hashCode();
     }
-    
+
     public String toString() {
-    	return name;
+        return name;
     }
 }

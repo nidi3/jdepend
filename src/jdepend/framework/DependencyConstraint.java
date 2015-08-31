@@ -43,14 +43,14 @@ import java.util.*;
 
 public class DependencyConstraint {
 
-    private HashMap packages;
+    private Map<String, JavaPackage> packages;
 
     public DependencyConstraint() {
-        packages = new HashMap();
+        packages = new HashMap<String, JavaPackage>();
     }
 
     public JavaPackage addPackage(String packageName) {
-        JavaPackage jPackage = (JavaPackage) packages.get(packageName);
+        JavaPackage jPackage = packages.get(packageName);
         if (jPackage == null) {
             jPackage = new JavaPackage(packageName);
             addPackage(jPackage);
@@ -74,18 +74,14 @@ public class DependencyConstraint {
      *
      * @return <code>true</code> if the packages match this constraint
      */
-    public MatchResult match(Collection expectedPackages) {
+    public MatchResult match(Collection<JavaPackage> expectedPackages) {
         MatchResult res = new MatchResult();
-        for (Iterator i = expectedPackages.iterator(); i.hasNext(); ) {
-            Object next = i.next();
-            if (next instanceof JavaPackage) {
-                JavaPackage nextPackage = (JavaPackage) next;
-                JavaPackage actualPackage = (JavaPackage) packages.get(nextPackage.getName());
-                if (actualPackage == null) {
-                    res.getUndefinedPackages().add(nextPackage);
-                } else if (!equalsDependencies(nextPackage, actualPackage)) {
-                    res.getNonMatchingPackages().add(new JavaPackage[]{actualPackage, nextPackage});
-                }
+        for (JavaPackage next : expectedPackages) {
+            JavaPackage actualPackage = packages.get(next.getName());
+            if (actualPackage == null) {
+                res.getUndefinedPackages().add(next);
+            } else if (!equalsDependencies(next, actualPackage)) {
+                res.getNonMatchingPackages().add(new JavaPackage[]{actualPackage, next});
             }
         }
         return res;
@@ -114,23 +110,17 @@ public class DependencyConstraint {
     }
 
     private boolean equalsAfferents(JavaPackage a, JavaPackage b) {
-
         if (a.equals(b)) {
-
             Collection otherAfferents = b.getAfferents();
-
             if (a.getAfferents().size() == otherAfferents.size()) {
-                for (Iterator i = a.getAfferents().iterator(); i.hasNext(); ) {
-                    JavaPackage afferent = (JavaPackage) i.next();
+                for (JavaPackage afferent : a.getAfferents()) {
                     if (!otherAfferents.contains(afferent)) {
                         return false;
                     }
                 }
-
                 return true;
             }
         }
-
         return false;
     }
 
@@ -141,8 +131,7 @@ public class DependencyConstraint {
             Collection otherEfferents = b.getEfferents();
 
             if (a.getEfferents().size() == otherEfferents.size()) {
-                for (Iterator i = a.getEfferents().iterator(); i.hasNext(); ) {
-                    JavaPackage efferent = (JavaPackage) i.next();
+                for (JavaPackage efferent : a.getEfferents()) {
                     if (!otherEfferents.contains(efferent)) {
                         return false;
                     }

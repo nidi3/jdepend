@@ -1,13 +1,9 @@
 package jdepend.framework;
 
-import java.math.BigDecimal;
-
 import jdepend.framework.p1.ExampleInnerAnnotation;
 import jdepend.framework.p2.ExampleEnum;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runners.Suite.SuiteClasses;
+import java.math.BigDecimal;
 
 /**
  * @author <b>Mike Clark</b>
@@ -34,8 +30,8 @@ public class ExampleConcreteClass extends ExampleAbstractClass {
     }
 
     public void c(BigDecimal bd, byte[] bytes) throws java.rmi.RemoteException {
-        int[] a = { 1, 2, 3};
-        int[][] b = { { 1, 2}, { 3, 4}, { 5, 6}};
+        int[] a = {1, 2, 3};
+        int[][] b = {{1, 2}, {3, 4}, {5, 6}};
     }
 
     public java.io.File[] d() throws java.io.IOException {
@@ -44,19 +40,18 @@ public class ExampleConcreteClass extends ExampleAbstractClass {
     }
 
     public java.lang.String[] e() {
-        java.lang.String[] strings = new java.lang.String[1];
-        return strings;
+        return new String[1];
     }
 
     @org.junit.Test(expected = javax.crypto.BadPaddingException.class)
     @ExampleAnnotation(
-    		c1 = java.awt.geom.AffineTransform.class,
-    		c2 = java.awt.image.renderable.ContextualRenderedImageFactory.class,
-    		c3 = @ExampleInnerAnnotation({
-    				java.awt.im.InputContext.class,
-    				java.awt.dnd.peer.DragSourceContextPeer.class}),
-    		c4 = ExampleEnum.E1)
-	@org.junit.Ignore
+            c1 = java.awt.geom.AffineTransform.class,
+            c2 = java.awt.image.renderable.ContextualRenderedImageFactory.class,
+            c3 = @ExampleInnerAnnotation({
+                    java.awt.im.InputContext.class,
+                    java.awt.dnd.peer.DragSourceContextPeer.class}),
+            c4 = ExampleEnum.E1)
+    @org.junit.Ignore
     public void f() {
     }
 

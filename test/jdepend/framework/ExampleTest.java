@@ -5,7 +5,6 @@ import junit.framework.TestCase;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * The <code>ExampleTest</code> is an example <code>TestCase</code>
@@ -90,10 +89,9 @@ public class ExampleTest extends TestCase {
 
         Collection packages = jdepend.analyze();
 
-        for (Iterator iter = packages.iterator(); iter.hasNext(); ) {
-            JavaPackage p = (JavaPackage) iter.next();
-            assertEquals("Distance exceeded: " + p.getName(),
-                    ideal, p.distance(), tolerance);
+        for (Object aPackage : packages) {
+            JavaPackage p = (JavaPackage) aPackage;
+            assertEquals("Distance exceeded: " + p.getName(), ideal, p.distance(), tolerance);
         }
     }
 

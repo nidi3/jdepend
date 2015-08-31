@@ -43,7 +43,8 @@ public class JDependTestCase extends TestCase {
         originalUserHome = System.getProperty("user.home");
     }
 
-    public void testDummy(){}
+    public void testDummy() {
+    }
 
     protected void tearDown() {
         System.setProperty("user.home", originalUserHome);

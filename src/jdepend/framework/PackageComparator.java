@@ -6,16 +6,17 @@ import java.util.Comparator;
  * The <code>PackageComparator</code> class is a <code>Comparator</code>
  * used to compare two <code>JavaPackage</code> instances for order using a
  * sorting strategy.
- * 
+ *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
 
-public class PackageComparator implements Comparator {
+public class PackageComparator implements Comparator<JavaPackage> {
 
     private PackageComparator byWhat;
 
     private static PackageComparator byName;
+
     static {
         byName = new PackageComparator();
     }
@@ -35,13 +36,9 @@ public class PackageComparator implements Comparator {
         return byWhat;
     }
 
-    public int compare(Object p1, Object p2) {
-
-        JavaPackage a = (JavaPackage) p1;
-        JavaPackage b = (JavaPackage) p2;
-
+    public int compare(JavaPackage p1, JavaPackage p2) {
         if (byWhat() == byName()) {
-            return a.getName().compareTo(b.getName());
+            return p1.getName().compareTo(p2.getName());
         }
 
         return 0;

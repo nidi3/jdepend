@@ -1,11 +1,14 @@
 package jdepend.framework;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * The <code>JavaClass</code> class represents a Java 
+ * The <code>JavaClass</code> class represents a Java
  * class or interface.
- * 
+ *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
@@ -15,7 +18,7 @@ public class JavaClass {
     private String className;
     private String packageName;
     private boolean isAbstract;
-    private HashMap imports;
+    private Map<String, JavaPackage> imports;
     private String sourceFile;
 
 
@@ -23,7 +26,7 @@ public class JavaClass {
         className = name;
         packageName = "default";
         isAbstract = false;
-        imports = new HashMap();
+        imports = new HashMap<String, JavaPackage>();
         sourceFile = "Unknown";
     }
 
@@ -51,7 +54,7 @@ public class JavaClass {
         return sourceFile;
     }
 
-    public Collection getImportedPackages() {
+    public Collection<JavaPackage> getImportedPackages() {
         return imports.values();
     }
 
@@ -83,13 +86,10 @@ public class JavaClass {
         return getName().hashCode();
     }
 
-    public static class ClassComparator implements Comparator {
+    public static class ClassComparator implements Comparator<JavaClass> {
 
-        public int compare(Object a, Object b) {
-            JavaClass c1 = (JavaClass) a;
-            JavaClass c2 = (JavaClass) b;
-
-            return c1.getName().compareTo(c2.getName());
+        public int compare(JavaClass a, JavaClass b) {
+            return a.getName().compareTo(b.getName());
         }
     }
 }

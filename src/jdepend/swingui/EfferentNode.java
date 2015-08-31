@@ -43,7 +43,7 @@ public class EfferentNode extends PackageNode {
      * 
      * @return Collection of coupled packages.
      */
-    protected Collection getCoupledPackages() {
+    protected Collection<JavaPackage> getCoupledPackages() {
         return getPackage().getEfferents();
     }
 

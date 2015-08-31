@@ -106,7 +106,7 @@ public class JarFileParserTest extends JDependTestCase {
 
         assertClassesExist(classes);
     }
-    
+
     public void testCountClasses() throws IOException {
 
         JDepend jdepend = new JDepend();
@@ -127,7 +127,7 @@ public class JarFileParserTest extends JDependTestCase {
         assertTrue(classes.contains(new JavaClass(
                 "jdepend.framework.ExampleConcreteClass")));
     }
-    
+
     private void assertInnerClassesExist(Collection classes) {
         assertTrue(classes.contains(new JavaClass(
                 "jdepend.framework.ExampleConcreteClass$ExampleInnerClass")));

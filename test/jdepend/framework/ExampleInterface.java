@@ -9,12 +9,12 @@ import java.math.BigDecimal;
 
 public interface ExampleInterface {
 
-    public void a();
+    void a();
 
-    public java.util.Vector b(String[] s, java.text.NumberFormat nf);
+    java.util.Vector b(String[] s, java.text.NumberFormat nf);
 
-    public void c(BigDecimal bd, byte[] b) throws java.rmi.RemoteException;
+    void c(BigDecimal bd, byte[] b) throws java.rmi.RemoteException;
 
-    public java.io.File[] d() throws java.io.IOException;
+    java.io.File[] d() throws java.io.IOException;
 
 }

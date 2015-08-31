@@ -19,8 +19,6 @@ public class DependTree extends JPanel implements TreeSelectionListener {
 
     private JTree tree;
 
-    private DependTreeModel model;
-
     /**
      * Constructs a <code>DependTree</code> with an empty tree model.
      */
@@ -52,9 +50,8 @@ public class DependTree extends JPanel implements TreeSelectionListener {
      * @param model Tree model.
      */
     public void setModel(DependTreeModel model) {
-        this.model = model;
         setBorder(BorderFactory.createTitledBorder(model.getRoot().toString()));
-        getTree().setModel(this.model);
+        getTree().setModel(model);
 
     }
 
@@ -97,8 +94,7 @@ public class DependTree extends JPanel implements TreeSelectionListener {
      * @return Scroll pane.
      */
     private JScrollPane createScrollPane() {
-        JScrollPane pane = new JScrollPane(getTree());
-        return pane;
+        return new JScrollPane(getTree());
     }
 
     /**

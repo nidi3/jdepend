@@ -11,7 +11,7 @@ import java.io.IOException;
 public class FileManagerTest extends JDependTestCase {
 
     private FileManager fileManager;
-    
+
     public FileManagerTest(String name) {
         super(name);
     }
@@ -39,10 +39,10 @@ public class FileManagerTest extends JDependTestCase {
     public void testNonExistentDirectory() {
 
         try {
-            
+
             fileManager.addDirectory(getBuildDir() + "junk");
             fail("Non-existent directory: Should raise IOException");
-        
+
         } catch (IOException expected) {
             assertTrue(true);
         }
@@ -51,12 +51,12 @@ public class FileManagerTest extends JDependTestCase {
     public void testInvalidDirectory() {
 
         String file = getTestDir() + getPackageSubDir() + "ExampleTest.java";
-        
+
         try {
-            
+
             fileManager.addDirectory(file);
             fail("Invalid directory: Should raise IOException");
-            
+
         } catch (IOException expected) {
             assertTrue(true);
         }
@@ -80,22 +80,22 @@ public class FileManagerTest extends JDependTestCase {
     }
 
     public void testJar() throws IOException {
-        File f = File.createTempFile("bogus", ".jar", 
-            new File(getTestDataDir()));
+        File f = File.createTempFile("bogus", ".jar",
+                new File(getTestDataDir()));
         fileManager.addDirectory(f.getPath());
         f.deleteOnExit();
     }
 
     public void testZip() throws IOException {
-        File f = File.createTempFile("bogus", ".zip", 
-            new File(getTestDataDir()));
+        File f = File.createTempFile("bogus", ".zip",
+                new File(getTestDataDir()));
         fileManager.addDirectory(f.getPath());
         f.deleteOnExit();
     }
 
     public void testWar() throws IOException {
-        File f = File.createTempFile("bogus", ".war", 
-            new File(getTestDataDir()));
+        File f = File.createTempFile("bogus", ".war",
+                new File(getTestDataDir()));
         fileManager.addDirectory(f.getPath());
         f.deleteOnExit();
     }

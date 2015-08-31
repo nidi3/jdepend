@@ -1,32 +1,36 @@
 package jdepend.framework;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
- * The <code>FileManager</code> class is responsible for extracting 
- * Java class files (<code>.class</code> files) from a collection of 
+ * The <code>FileManager</code> class is responsible for extracting
+ * Java class files (<code>.class</code> files) from a collection of
  * registered directories.
- * 
+ *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
 
 public class FileManager {
 
-    private ArrayList directories;
+    private List<File> directories;
     private boolean acceptInnerClasses;
 
 
     public FileManager() {
-        directories = new ArrayList();
+        directories = new ArrayList<File>();
         acceptInnerClasses = true;
     }
 
     /**
      * Determines whether inner classes should be collected.
-     * 
-     * @param b <code>true</code> to collect inner classes; 
+     *
+     * @param b <code>true</code> to collect inner classes;
      *          <code>false</code> otherwise.
      */
     public void acceptInnerClasses(boolean b) {
@@ -49,10 +53,7 @@ public class FileManager {
     }
 
     public boolean acceptClassFile(File file) {
-        if (!file.isFile()) {
-            return false;
-        }
-        return acceptClassFileName(file.getName());
+        return file.isFile() && acceptClassFileName(file.getName());
     }
 
     public boolean acceptClassFileName(String name) {
@@ -63,30 +64,26 @@ public class FileManager {
             }
         }
 
-        if (!name.toLowerCase().endsWith(".class")) {
-            return false;
-        }
+        return name.toLowerCase().endsWith(".class");
 
-        return true;
     }
 
     public boolean acceptJarFile(File file) {
         return isJar(file) || isZip(file) || isWar(file);
     }
 
-    public Collection extractFiles() {
+    public Collection<File> extractFiles() {
 
-        Collection files = new TreeSet();
+        Collection<File> files = new TreeSet<File>();
 
-        for (Iterator i = directories.iterator(); i.hasNext();) {
-            File directory = (File)i.next();
+        for (File directory : directories) {
             collectFiles(directory, files);
         }
 
         return files;
     }
 
-    private void collectFiles(File directory, Collection files) {
+    private void collectFiles(File directory, Collection<File> files) {
 
         if (directory.isFile()) {
 
@@ -96,9 +93,9 @@ public class FileManager {
 
             String[] directoryFiles = directory.list();
 
-            for (int i = 0; i < directoryFiles.length; i++) {
+            for (String directoryFile : directoryFiles) {
 
-                File file = new File(directory, directoryFiles[i]);
+                File file = new File(directory, directoryFile);
                 if (acceptFile(file)) {
                     addFile(file, files);
                 } else if (file.isDirectory()) {
@@ -108,7 +105,7 @@ public class FileManager {
         }
     }
 
-    private void addFile(File f, Collection files) {
+    private void addFile(File f, Collection<File> files) {
         if (!files.contains(f)) {
             files.add(f);
         }
@@ -121,14 +118,13 @@ public class FileManager {
     private boolean isZip(File file) {
         return existsWithExtension(file, ".zip");
     }
- 
+
     private boolean isJar(File file) {
         return existsWithExtension(file, ".jar");
     }
 
     private boolean existsWithExtension(File file, String extension) {
-        return file.isFile() &&
-            file.getName().toLowerCase().endsWith(extension);
+        return file.isFile() && file.getName().toLowerCase().endsWith(extension);
     }
 
 }

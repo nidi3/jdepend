@@ -1,5 +1,5 @@
 package jdepend.framework.p3;
 
 public enum ExampleSecondEnum {
-	NO_DEPENDENCIES_ON_ME
+    NO_DEPENDENCIES_ON_ME
 }

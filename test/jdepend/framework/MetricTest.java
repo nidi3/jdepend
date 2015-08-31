@@ -102,7 +102,7 @@ public class MetricTest extends JDependTestCase {
         assertEquals(format(0.12f), format(p.distance()));
         assertEquals(1, p.getVolatility());
     }
-    
+
     private void assertXmlUIPackage() {
 
         JavaPackage p = jdepend.getPackage("jdepend.xmlui");

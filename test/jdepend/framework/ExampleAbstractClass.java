@@ -7,8 +7,8 @@ import java.math.BigDecimal;
  * @author Clarkware Consulting, Inc.
  */
 
-public abstract class ExampleAbstractClass 
-    implements ExampleInterface, java.io.Serializable {
+public abstract class ExampleAbstractClass
+        implements ExampleInterface, java.io.Serializable {
 
     private java.lang.reflect.Method method;
 

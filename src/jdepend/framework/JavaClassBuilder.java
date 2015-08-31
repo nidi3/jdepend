@@ -1,14 +1,16 @@
 package jdepend.framework;
 
 import java.io.*;
-import java.util.*;
-import java.util.jar.*;
-import java.util.zip.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 /**
- * The <code>JavaClassBuilder</code> builds <code>JavaClass</code> 
+ * The <code>JavaClassBuilder</code> builds <code>JavaClass</code>
  * instances from .class, .jar, .war, or .zip files.
- * 
+ *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
@@ -18,7 +20,7 @@ public class JavaClassBuilder {
     private AbstractParser parser;
     private FileManager fileManager;
 
-    
+
     public JavaClassBuilder() {
         this(new ClassFileParser(), new FileManager());
     }
@@ -41,27 +43,22 @@ public class JavaClassBuilder {
         };
 
         JavaClassBuilder builder = new JavaClassBuilder(counter, fileManager);
-        Collection classes = builder.build();
+        Collection<JavaClass> classes = builder.build();
         return classes.size();
     }
 
     /**
      * Builds the <code>JavaClass</code> instances.
-     * 
+     *
      * @return Collection of <code>JavaClass</code> instances.
      */
-    public Collection build() {
+    public Collection<JavaClass> build() {
 
-        Collection classes = new ArrayList();
+        Collection<JavaClass> classes = new ArrayList<JavaClass>();
 
-        for (Iterator i = fileManager.extractFiles().iterator(); i.hasNext();) {
-
-            File nextFile = (File)i.next();
-
+        for (File nextFile : fileManager.extractFiles()) {
             try {
-
                 classes.addAll(buildClasses(nextFile));
-
             } catch (IOException ioe) {
                 System.err.println("\n" + ioe.getMessage());
             }
@@ -71,20 +68,20 @@ public class JavaClassBuilder {
     }
 
     /**
-     * Builds the <code>JavaClass</code> instances from the 
+     * Builds the <code>JavaClass</code> instances from the
      * specified file.
-     * 
+     *
      * @param file Class or Jar file.
      * @return Collection of <code>JavaClass</code> instances.
      */
-    public Collection buildClasses(File file) throws IOException {
+    public Collection<JavaClass> buildClasses(File file) throws IOException {
 
         if (fileManager.acceptClassFile(file)) {
             InputStream is = null;
             try {
                 is = new BufferedInputStream(new FileInputStream(file));
                 JavaClass parsedClass = parser.parse(is);
-                Collection javaClasses = new ArrayList();
+                Collection<JavaClass> javaClasses = new ArrayList<JavaClass>();
                 javaClasses.add(parsedClass);
                 return javaClasses;
             } finally {
@@ -95,27 +92,27 @@ public class JavaClassBuilder {
         } else if (fileManager.acceptJarFile(file)) {
 
             JarFile jarFile = new JarFile(file);
-            Collection result = buildClasses(jarFile);
+            Collection<JavaClass> result = buildClasses(jarFile);
             jarFile.close();
             return result;
 
         } else {
-            throw new IOException("File is not a valid " + 
-                ".class, .jar, .war, or .zip file: " + 
-                file.getPath());
+            throw new IOException("File is not a valid " +
+                    ".class, .jar, .war, or .zip file: " +
+                    file.getPath());
         }
     }
 
     /**
-     * Builds the <code>JavaClass</code> instances from the specified 
+     * Builds the <code>JavaClass</code> instances from the specified
      * jar, war, or zip file.
-     * 
+     *
      * @param file Jar, war, or zip file.
      * @return Collection of <code>JavaClass</code> instances.
      */
-    public Collection buildClasses(JarFile file) throws IOException {
+    public Collection<JavaClass> buildClasses(JarFile file) throws IOException {
 
-        Collection javaClasses = new ArrayList();
+        Collection<JavaClass> javaClasses = new ArrayList<JavaClass>();
 
         Enumeration entries = file.entries();
         while (entries.hasMoreElements()) {
@@ -123,7 +120,7 @@ public class JavaClassBuilder {
             if (fileManager.acceptClassFileName(e.getName())) {
                 InputStream is = null;
                 try {
-	                is = new BufferedInputStream(file.getInputStream(e));
+                    is = new BufferedInputStream(file.getInputStream(e));
                     JavaClass jc = parser.parse(is);
                     javaClasses.add(jc);
                 } finally {
