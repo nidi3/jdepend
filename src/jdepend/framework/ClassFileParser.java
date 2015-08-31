@@ -26,6 +26,11 @@ public class ClassFileParser extends AbstractParser {
     private static final int CONSTANT_METHOD = 10;
     private static final int CONSTANT_INTERFACEMETHOD = 11;
     private static final int CONSTANT_NAMEANDTYPE = 12;
+
+    private static final int CONSTANT_METHOD_HANDLE = 15;
+    private static final int CONSTANT_METHOD_TYPE = 16;
+    private static final int CONSTANT_INVOKEDYNAMIC = 18;
+
     private static final char CLASS_DESCRIPTOR = 'L';
     private static final int ACC_INTERFACE = 0x200;
     private static final int ACC_ABSTRACT = 0x400;
@@ -94,6 +99,7 @@ public class ClassFileParser extends AbstractParser {
         }
     }
 
+    @Override
     public JavaClass parse(InputStream is) throws IOException {
 
         reset();
@@ -102,10 +108,10 @@ public class ClassFileParser extends AbstractParser {
 
         in = new DataInputStream(is);
 
-        int magic = parseMagic();
+        parseMagic();
 
-        int minorVersion = parseMinorVersion();
-        int majorVersion = parseMajorVersion();
+        parseMinorVersion();
+        parseMajorVersion();
 
         constantPool = parseConstantPool();
 
@@ -266,14 +272,15 @@ public class ClassFileParser extends AbstractParser {
 
             case (ClassFileParser.CONSTANT_CLASS):
             case (ClassFileParser.CONSTANT_STRING):
+            case (ClassFileParser.CONSTANT_METHOD_TYPE):
                 result = new Constant(tag, in.readUnsignedShort());
                 break;
             case (ClassFileParser.CONSTANT_FIELD):
             case (ClassFileParser.CONSTANT_METHOD):
             case (ClassFileParser.CONSTANT_INTERFACEMETHOD):
             case (ClassFileParser.CONSTANT_NAMEANDTYPE):
-                result = new Constant(tag, in.readUnsignedShort(), in
-                        .readUnsignedShort());
+            case (ClassFileParser.CONSTANT_INVOKEDYNAMIC):
+                result = new Constant(tag, in.readUnsignedShort(), in                        .readUnsignedShort());
                 break;
             case (ClassFileParser.CONSTANT_INTEGER):
                 result = new Constant(tag, new Integer(in.readInt()));
@@ -289,6 +296,9 @@ public class ClassFileParser extends AbstractParser {
                 break;
             case (ClassFileParser.CONSTANT_UTF8):
                 result = new Constant(tag, in.readUTF());
+                break;
+            case (ClassFileParser.CONSTANT_METHOD_HANDLE):
+                result = new Constant(tag, in.readByte(), in.readUnsignedShort());
                 break;
             default:
                 throw new IOException("Unknown constant: " + tag);
@@ -545,11 +555,11 @@ public class ClassFileParser extends AbstractParser {
 
     class Constant {
 
-        private byte _tag;
+        private final byte _tag;
 
-        private int _nameIndex;
+        private final int _nameIndex;
 
-        private int _typeIndex;
+        private final int _typeIndex;
 
         private Object _value;
 
@@ -585,6 +595,7 @@ public class ClassFileParser extends AbstractParser {
             return _value;
         }
 
+        @Override
         public String toString() {
 
             StringBuilder s = new StringBuilder("");
@@ -609,11 +620,11 @@ public class ClassFileParser extends AbstractParser {
 
     class FieldOrMethodInfo {
 
-        private int _accessFlags;
+        private final int _accessFlags;
 
-        private int _nameIndex;
+        private final int _nameIndex;
 
-        private int _descriptorIndex;
+        private final int _descriptorIndex;
 
         private AttributeInfo _runtimeVisibleAnnotations;
 
@@ -636,6 +647,7 @@ public class ClassFileParser extends AbstractParser {
             return _descriptorIndex;
         }
 
+        @Override
         public String toString() {
             StringBuilder s = new StringBuilder("");
 
@@ -688,6 +700,7 @@ public class ClassFileParser extends AbstractParser {
      *
      * @return String representation.
      */
+    @Override
     public String toString() {
 
         StringBuilder s = new StringBuilder();
@@ -742,7 +755,7 @@ public class ClassFileParser extends AbstractParser {
     public static void main(String args[]) {
         try {
 
-            ClassFileParser.DEBUG = true;
+            AbstractParser.DEBUG = true;
 
             if (args.length <= 0) {
                 System.err.println("usage: ClassFileParser <class-file>");
