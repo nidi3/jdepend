@@ -1,4 +1,4 @@
-Changes from the original:
+Changes from the original: [![Build Status](https://travis-ci.org/nidi3/jdepend.svg?branch=master)](https://travis-ci.org/nidi3/jdepend)
 
  - Fix bug in DependencyConstraint (https://github.com/clarkware/jdepend/issues/5)
  - Support Java 8 class files (https://github.com/clarkware/jdepend/issues/7)
@@ -56,4 +56,4 @@ Changes from the original:
 
   Thanks for using JDepend!
 
-```
+``
