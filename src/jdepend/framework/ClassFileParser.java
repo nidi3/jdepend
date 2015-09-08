@@ -420,7 +420,7 @@ public class ClassFileParser extends AbstractParser {
             int visitedElementValuePairs = 0;
             index += 2;
             while (visitedElementValuePairs < numElementValuePairs) {
-                index = addAnnotationElementValueReferences(data, index = index + 2);
+                index = addAnnotationElementValueReferences(data, index + 2);
                 visitedElementValuePairs++;
             }
             visitedAnnotations++;

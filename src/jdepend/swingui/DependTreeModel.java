@@ -104,15 +104,11 @@ public class DependTreeModel implements TreeModel {
      * otherwise.
      */
     public boolean isLeaf(Object o) {
-
-        boolean answer = true;
-
         if (o instanceof PackageNode) {
             PackageNode node = (PackageNode) o;
             return node.isLeaf();
         }
-
-        return answer;
+        return true;
     }
 
     /**

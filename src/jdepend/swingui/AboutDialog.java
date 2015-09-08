@@ -53,8 +53,6 @@ class AboutDialog extends JDialog {
         JLabel httpLabel = new JLabel("www.clarkware.com");
         httpLabel.setFont(new Font("dialog", Font.PLAIN, 12));
 
-        JLabel blankLabel = new JLabel(" ");
-
         JButton closeButton = createButton("Close");
 
         panel.add(titleLabel, createConstraints(1, 1));

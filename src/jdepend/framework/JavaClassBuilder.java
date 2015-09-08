@@ -117,7 +117,9 @@ public class JavaClassBuilder {
                     JavaClass jc = parser.parse(is);
                     javaClasses.add(jc);
                 } finally {
-                    is.close();
+                    if (is != null) {
+                        is.close();
+                    }
                 }
             }
         }
