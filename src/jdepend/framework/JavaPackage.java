@@ -159,9 +159,11 @@ public class JavaPackage {
      *
      * @param imported Java package.
      */
-    public void dependsUpon(JavaPackage imported) {
-        addEfferent(imported);
-        imported.addAfferent(this);
+    public void dependsUpon(JavaPackage... imported) {
+        for (final JavaPackage pack : imported) {
+            addEfferent(pack);
+            pack.addAfferent(this);
+        }
     }
 
     /**
@@ -219,9 +221,7 @@ public class JavaPackage {
      * @return Instability (0-1).
      */
     public float instability() {
-
-        float totalCoupling = (float) efferentCoupling()
-                + (float) afferentCoupling();
+        float totalCoupling = (float) efferentCoupling() + (float) afferentCoupling();
 
         if (totalCoupling > 0) {
             return efferentCoupling() / totalCoupling;

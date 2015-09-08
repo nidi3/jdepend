@@ -89,19 +89,11 @@ public class ConstraintTest extends JDependTestCase {
         JavaPackage orgjunit = constraint.addPackage("org.junit");
         JavaPackage orghamcrest = constraint.addPackage("org.hamcrest");
 
-        framework.dependsUpon(junitframework);
-        framework.dependsUpon(orghamcrest);
-        framework.dependsUpon(junitui);
+        framework.dependsUpon(junitframework,orghamcrest,junitui);
         text.dependsUpon(framework);
-        xml.dependsUpon(framework);
-        xml.dependsUpon(text);
+        xml.dependsUpon(framework,text);
         swing.dependsUpon(framework);
-        xml.dependsUpon(framework);
-        framework.dependsUpon(jdependframeworkp2);
-        framework.dependsUpon(jdependframeworkp3);
-        framework.dependsUpon(jdependframeworkp1);
-        framework.dependsUpon(orgjunitrunners);
-        framework.dependsUpon(orgjunit);
+        framework.dependsUpon(jdependframeworkp1,jdependframeworkp2,jdependframeworkp3,orgjunitrunners,orgjunit);
 
         assertEquals(true, jdepend.dependencyMatch(constraint));
     }

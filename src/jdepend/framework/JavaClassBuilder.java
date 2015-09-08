@@ -53,7 +53,6 @@ public class JavaClassBuilder {
      * @return Collection of <code>JavaClass</code> instances.
      */
     public Collection<JavaClass> build() {
-
         Collection<JavaClass> classes = new ArrayList<JavaClass>();
 
         for (File nextFile : fileManager.extractFiles()) {
@@ -75,7 +74,6 @@ public class JavaClassBuilder {
      * @return Collection of <code>JavaClass</code> instances.
      */
     public Collection<JavaClass> buildClasses(File file) throws IOException {
-
         if (fileManager.acceptClassFile(file)) {
             InputStream is = null;
             try {
@@ -90,16 +88,12 @@ public class JavaClassBuilder {
                 }
             }
         } else if (fileManager.acceptJarFile(file)) {
-
             JarFile jarFile = new JarFile(file);
             Collection<JavaClass> result = buildClasses(jarFile);
             jarFile.close();
             return result;
-
         } else {
-            throw new IOException("File is not a valid " +
-                    ".class, .jar, .war, or .zip file: " +
-                    file.getPath());
+            throw new IOException("File is not a valid " + ".class, .jar, .war, or .zip file: " + file.getPath());
         }
     }
 
@@ -111,7 +105,6 @@ public class JavaClassBuilder {
      * @return Collection of <code>JavaClass</code> instances.
      */
     public Collection<JavaClass> buildClasses(JarFile file) throws IOException {
-
         Collection<JavaClass> javaClasses = new ArrayList<JavaClass>();
 
         Enumeration entries = file.entries();

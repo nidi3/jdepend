@@ -1,12 +1,15 @@
 package jdepend.swingui;
 
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * The <code>AboutDialog</code> displays the about information.
- * 
+ *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
@@ -15,7 +18,7 @@ class AboutDialog extends JDialog {
 
     /**
      * Constructs an <code>AboutDialog</code> with the specified parent frame.
-     * 
+     *
      * @param parent Parent frame.
      */
     public AboutDialog(JFrame parent) {
@@ -75,7 +78,7 @@ class AboutDialog extends JDialog {
 
     /**
      * Creates and returns a button with the specified label.
-     * 
+     *
      * @param label Button label.
      * @return Button.
      */
@@ -95,7 +98,7 @@ class AboutDialog extends JDialog {
     /**
      * Creates and returns a grid bag constraint with the specified x and y
      * values.
-     * 
+     *
      * @param x X-coordinate.
      * @param y Y-coordinate.
      * @return GridBagConstraints

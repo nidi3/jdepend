@@ -73,7 +73,6 @@ public class JavaClass {
     }
 
     public boolean equals(Object other) {
-
         if (other instanceof JavaClass) {
             JavaClass otherClass = (JavaClass) other;
             return otherClass.getName().equals(getName());
@@ -87,7 +86,6 @@ public class JavaClass {
     }
 
     public static class ClassComparator implements Comparator<JavaClass> {
-
         public int compare(JavaClass a, JavaClass b) {
             return a.getName().compareTo(b.getName());
         }

@@ -169,8 +169,7 @@ public class ClassFileParser extends AbstractParser {
             //
             // 8-byte constants use two constant pool entries
             //
-            if (constant.getTag() == CONSTANT_DOUBLE
-                    || constant.getTag() == CONSTANT_LONG) {
+            if (constant.getTag() == CONSTANT_DOUBLE || constant.getTag() == CONSTANT_LONG) {
                 i++;
             }
         }
@@ -280,7 +279,7 @@ public class ClassFileParser extends AbstractParser {
             case (ClassFileParser.CONSTANT_INTERFACEMETHOD):
             case (ClassFileParser.CONSTANT_NAMEANDTYPE):
             case (ClassFileParser.CONSTANT_INVOKEDYNAMIC):
-                result = new Constant(tag, in.readUnsignedShort(), in                        .readUnsignedShort());
+                result = new Constant(tag, in.readUnsignedShort(), in.readUnsignedShort());
                 break;
             case (ClassFileParser.CONSTANT_INTEGER):
                 result = new Constant(tag, new Integer(in.readInt()));
@@ -310,8 +309,7 @@ public class ClassFileParser extends AbstractParser {
     private FieldOrMethodInfo parseFieldOrMethodInfo() throws IOException {
 
         FieldOrMethodInfo result = new FieldOrMethodInfo(
-                in.readUnsignedShort(), in.readUnsignedShort(), in
-                .readUnsignedShort());
+                in.readUnsignedShort(), in.readUnsignedShort(), in.readUnsignedShort());
 
         int attributesCount = in.readUnsignedShort();
         for (int a = 0; a < attributesCount; a++) {
@@ -365,7 +363,6 @@ public class ClassFileParser extends AbstractParser {
     }
 
     private Constant getConstantPoolEntry(int entryIndex) throws IOException {
-
         if (entryIndex < 0 || entryIndex >= constantPool.length) {
             throw new IOException("Illegal constant pool index : " + entryIndex);
         }
@@ -382,8 +379,7 @@ public class ClassFileParser extends AbstractParser {
                 debug("Parser: class type = " + slashesToDots(name));
             }
 
-            if (constantPool[j].getTag() == CONSTANT_DOUBLE
-                    || constantPool[j].getTag() == CONSTANT_LONG) {
+            if (constantPool[j].getTag() == CONSTANT_DOUBLE || constantPool[j].getTag() == CONSTANT_LONG) {
                 j++;
             }
         }
@@ -494,8 +490,7 @@ public class ClassFileParser extends AbstractParser {
             return (String) entry.getValue();
         }
 
-        throw new IOException("Constant pool entry is not a UTF8 type: "
-                + entryIndex);
+        throw new IOException("Constant pool entry is not a UTF8 type: " + entryIndex);
     }
 
     private void addImport(String importPackage) {
@@ -629,7 +624,6 @@ public class ClassFileParser extends AbstractParser {
         private AttributeInfo _runtimeVisibleAnnotations;
 
         FieldOrMethodInfo(int accessFlags, int nameIndex, int descriptorIndex) {
-
             _accessFlags = accessFlags;
             _nameIndex = nameIndex;
             _descriptorIndex = descriptorIndex;
@@ -652,12 +646,9 @@ public class ClassFileParser extends AbstractParser {
             StringBuilder s = new StringBuilder("");
 
             try {
+                s.append("\n    name (#" + getNameIndex() + ") = " + toUTF8(getNameIndex()));
 
-                s.append("\n    name (#" + getNameIndex() + ") = "
-                        + toUTF8(getNameIndex()));
-
-                s.append("\n    signature (#" + getDescriptorIndex() + ") = "
-                        + toUTF8(getDescriptorIndex()));
+                s.append("\n    signature (#" + getDescriptorIndex() + ") = " + toUTF8(getDescriptorIndex()));
 
                 String[] types = descriptorToTypes(toUTF8(getDescriptorIndex()));
                 for (String type : types) {
@@ -713,8 +704,7 @@ public class ClassFileParser extends AbstractParser {
             for (int i = 1; i < constantPool.length; i++) {
                 Constant entry = getConstantPoolEntry(i);
                 s.append("    " + i + ". " + entry.toString() + "\n");
-                if (entry.getTag() == CONSTANT_DOUBLE
-                        || entry.getTag() == CONSTANT_LONG) {
+                if (entry.getTag() == CONSTANT_DOUBLE || entry.getTag() == CONSTANT_LONG) {
                     i++;
                 }
             }

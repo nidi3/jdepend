@@ -79,8 +79,7 @@ public class PropertyConfigurator {
         Enumeration e = properties.propertyNames();
         while (e.hasMoreElements()) {
             String key = (String) e.nextElement();
-            if (!key.startsWith("ignore")
-                    && (!key.equals("analyzeInnerClasses"))) {
+            if (!key.startsWith("ignore") && (!key.equals("analyzeInnerClasses"))) {
                 String v = properties.getProperty(key);
                 packages.add(new JavaPackage(key, Integer.parseInt(v)));
             }

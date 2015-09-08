@@ -1,18 +1,18 @@
 package jdepend.xmlui;
 
-import java.io.*;
-import java.util.*;
-
-import java.text.NumberFormat;
-
 import jdepend.framework.JavaClass;
 import jdepend.framework.JavaPackage;
+
+import java.io.PrintWriter;
+import java.text.NumberFormat;
+import java.util.Collection;
+import java.util.Locale;
 
 /**
  * The <code>JDepend</code> class analyzes directories of Java class files,
  * generates metrics for each Java package, and reports the metrics in an XML
  * format.
- * 
+ *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
@@ -28,7 +28,7 @@ public class JDepend extends jdepend.textui.JDepend {
 
     /**
      * Constructs a <code>JDepend</code> instance with the specified writer.
-     * 
+     *
      * @param writer Writer.
      */
     public JDepend(PrintWriter writer) {

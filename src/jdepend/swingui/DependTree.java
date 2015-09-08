@@ -1,16 +1,17 @@
 package jdepend.swingui;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.tree.*;
-import javax.swing.event.*;
-
 import jdepend.framework.JavaPackage;
+
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.*;
 
 /**
  * The <code>DependTree</code> class defines the graphical tree for displaying
  * the packages and their hierarchical dependencies.
- * 
+ *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
@@ -28,7 +29,7 @@ public class DependTree extends JPanel implements TreeSelectionListener {
 
     /**
      * Constructs a <code>DependTree</code> with the specified tree model.
-     * 
+     *
      * @param model Depend tree model.
      */
     public DependTree(DependTreeModel model) {
@@ -46,7 +47,7 @@ public class DependTree extends JPanel implements TreeSelectionListener {
 
     /**
      * Sets the tree model.
-     * 
+     *
      * @param model Tree model.
      */
     public void setModel(DependTreeModel model) {
@@ -57,7 +58,7 @@ public class DependTree extends JPanel implements TreeSelectionListener {
 
     /**
      * Returns the tree model.
-     * 
+     *
      * @return Tree model.
      */
     public DependTreeModel getModel() {
@@ -66,7 +67,7 @@ public class DependTree extends JPanel implements TreeSelectionListener {
 
     /**
      * Registers the specified listener with this tree.
-     * 
+     *
      * @param l Tree selection listener.
      */
     public void addTreeSelectionListener(TreeSelectionListener l) {
@@ -76,7 +77,7 @@ public class DependTree extends JPanel implements TreeSelectionListener {
     /**
      * Callback method triggered whenever the value of the tree selection
      * changes.
-     * 
+     *
      * @param te Event that characterizes the change.
      */
     public void valueChanged(TreeSelectionEvent te) {
@@ -90,7 +91,7 @@ public class DependTree extends JPanel implements TreeSelectionListener {
 
     /**
      * Creates and returns a scroll pane.
-     * 
+     *
      * @return Scroll pane.
      */
     private JScrollPane createScrollPane() {
@@ -99,7 +100,7 @@ public class DependTree extends JPanel implements TreeSelectionListener {
 
     /**
      * Creates and returns a peered tree.
-     * 
+     *
      * @return Tree.
      */
     private JTree createTree() {

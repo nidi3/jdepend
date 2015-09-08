@@ -57,7 +57,6 @@ public class FileManager {
     }
 
     public boolean acceptClassFileName(String name) {
-
         if (!acceptInnerClasses) {
             if (name.toLowerCase().indexOf("$") > 0) {
                 return false;
@@ -65,7 +64,6 @@ public class FileManager {
         }
 
         return name.toLowerCase().endsWith(".class");
-
     }
 
     public boolean acceptJarFile(File file) {
@@ -73,7 +71,6 @@ public class FileManager {
     }
 
     public Collection<File> extractFiles() {
-
         Collection<File> files = new TreeSet<File>();
 
         for (File directory : directories) {
@@ -84,11 +81,8 @@ public class FileManager {
     }
 
     private void collectFiles(File directory, Collection<File> files) {
-
         if (directory.isFile()) {
-
             addFile(directory, files);
-
         } else {
 
             String[] directoryFiles = directory.list();
