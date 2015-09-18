@@ -18,7 +18,7 @@ import java.util.Collection;
 
 public class PackageFilter {
 
-    private Collection<String> filtered;
+    private final Collection<String> filtered;
 
     /**
      * Constructs a <code>PackageFilter</code> instance containing
@@ -41,6 +41,17 @@ public class PackageFilter {
         this(new ArrayList<String>());
         PropertyConfigurator config = new PropertyConfigurator(f);
         addPackages(config.getFilteredPackages());
+    }
+
+    /**
+     * Constructs a <code>PackageFilter</code> instance with the
+     * specified collection of package names to filter.
+     *
+     * @param packageNames Package names to filter.
+     */
+    public PackageFilter(String... packageNames) {
+        filtered = new ArrayList<String>();
+        addPackages(packageNames);
     }
 
     /**
@@ -78,6 +89,12 @@ public class PackageFilter {
         }
 
         return true;
+    }
+
+    public void addPackages(String... packageNames) {
+        for (String packageName : packageNames) {
+            addPackage(packageName);
+        }
     }
 
     public void addPackages(Collection<String> packageNames) {
