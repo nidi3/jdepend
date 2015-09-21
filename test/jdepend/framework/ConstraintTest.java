@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class ConstraintTest extends JDependTestCase {
 
-    private JDepend jdepend;
+    private JDepend jDepend;
 
     public ConstraintTest(String name) {
         super(name);
@@ -17,10 +17,8 @@ public class ConstraintTest extends JDependTestCase {
 
     protected void setUp() {
         super.setUp();
-        PackageFilter filter = new PackageFilter();
-        filter.addPackage("java.*");
-        filter.addPackage("javax.*");
-        jdepend = new JDepend(filter);
+        PackageFilter filter = PackageFilter.fromProperties().withPackages("java.*","javax.*");
+        jDepend = new JDepend(filter);
     }
 
     public void testMatchPass() {
@@ -37,10 +35,10 @@ public class ConstraintTest extends JDependTestCase {
 
         actualA.dependsUpon(actualB);
 
-        jdepend.addPackage(actualA);
-        jdepend.addPackage(actualB);
+        jDepend.addPackage(actualA);
+        jDepend.addPackage(actualB);
 
-        assertEquals(true, jdepend.dependencyMatch(constraint));
+        assertEquals(true, jDepend.dependencyMatch(constraint));
     }
 
     public void testMatchFail() {
@@ -60,41 +58,40 @@ public class ConstraintTest extends JDependTestCase {
         actualA.dependsUpon(actualB);
         actualA.dependsUpon(actualC);
 
-        jdepend.addPackage(actualA);
-        jdepend.addPackage(actualB);
-        jdepend.addPackage(actualC);
+        jDepend.addPackage(actualA);
+        jDepend.addPackage(actualB);
+        jDepend.addPackage(actualC);
 
-        assertEquals(false, jdepend.dependencyMatch(constraint));
+        assertEquals(false, jDepend.dependencyMatch(constraint));
     }
 
     public void testJDependConstraints() throws IOException {
 
-        jdepend.addDirectory(getBuildDir());
-        jdepend.addDirectory(getTestBuildDir());
+        jDepend.addDirectory(getBuildDir());
+        jDepend.addDirectory(getTestBuildDir());
 
-        jdepend.analyze();
+        jDepend.analyze();
 
-        DependencyConstraint constraint = new DependencyConstraint();
+        class Junit {
+            JavaPackage framework, textui;
+        }
+        class Jdepend {
+            JavaPackage framework, textui, xmlui, swingui, frameworkP1, frameworkP2, frameworkP3;
+        }
+        class Org {
+            JavaPackage junit, junitRunners, hamcrest;
+        }
+        final Junit junit = new Junit();
+        final Jdepend jdepend = new Jdepend();
+        final Org org = new Org();
+        DependencyConstraint constraint = DependencyConstraint.fromFields(junit, jdepend, org);
 
-        JavaPackage junitframework = constraint.addPackage("junit.framework");
-        JavaPackage junitui = constraint.addPackage("junit.textui");
-        JavaPackage framework = constraint.addPackage("jdepend.framework");
-        JavaPackage text = constraint.addPackage("jdepend.textui");
-        JavaPackage xml = constraint.addPackage("jdepend.xmlui");
-        JavaPackage swing = constraint.addPackage("jdepend.swingui");
-        JavaPackage orgjunitrunners = constraint.addPackage("org.junit.runners");
-        JavaPackage jdependframeworkp2 = constraint.addPackage("jdepend.framework.p2");
-        JavaPackage jdependframeworkp3 = constraint.addPackage("jdepend.framework.p3");
-        JavaPackage jdependframeworkp1 = constraint.addPackage("jdepend.framework.p1");
-        JavaPackage orgjunit = constraint.addPackage("org.junit");
-        JavaPackage orghamcrest = constraint.addPackage("org.hamcrest");
+        jdepend.framework.dependsUpon(junit.framework, org.hamcrest, junit.textui);
+        jdepend.textui.dependsUpon(jdepend.framework);
+        jdepend.xmlui.dependsUpon(jdepend.framework, jdepend.textui);
+        jdepend.swingui.dependsUpon(jdepend.framework);
+        jdepend.framework.dependsUpon(jdepend.frameworkP1, jdepend.frameworkP2, jdepend.frameworkP3, org.junitRunners, org.junit);
 
-        framework.dependsUpon(junitframework,orghamcrest,junitui);
-        text.dependsUpon(framework);
-        xml.dependsUpon(framework,text);
-        swing.dependsUpon(framework);
-        framework.dependsUpon(jdependframeworkp1,jdependframeworkp2,jdependframeworkp3,orgjunitrunners,orgjunit);
-
-        assertEquals(true, jdepend.dependencyMatch(constraint));
+        assertEquals(true, jDepend.dependencyMatch(constraint));
     }
 }

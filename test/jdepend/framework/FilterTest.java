@@ -3,6 +3,7 @@ package jdepend.framework;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -26,30 +27,21 @@ public class FilterTest extends JDependTestCase {
     }
 
     public void testDefault() {
-        PackageFilter filter = new PackageFilter();
+        PackageFilter filter = PackageFilter.fromProperties();
         assertEquals(5, filter.getFilters().size());
         assertFiltersExist(filter);
     }
 
     public void testFile() throws IOException {
-
         String filterFile = getTestDataDir() + "jdepend.properties";
-
-        PackageFilter filter = new PackageFilter(new File(filterFile));
+        PackageFilter filter = PackageFilter.fromFile(new File(filterFile));
         assertEquals(5, filter.getFilters().size());
         assertFiltersExist(filter);
     }
 
     public void testCollection() throws IOException {
-
-        Collection<String> filters = new ArrayList<String>();
-        filters.add("java.*");
-        filters.add("javax.*");
-        filters.add("sun.*");
-        filters.add("com.sun.*");
-        filters.add("com.xyz.tests.*");
-
-        PackageFilter filter = new PackageFilter(filters);
+        Collection<String> filters = Arrays.asList("java.*", "javax.*", "sun.*", "com.sun.*", "com.xyz.tests.*");
+        PackageFilter filter = PackageFilter.fromNames(filters);
         assertEquals(5, filter.getFilters().size());
         assertFiltersExist(filter);
     }
@@ -57,8 +49,14 @@ public class FilterTest extends JDependTestCase {
     public void testCollectionSubset() {
         Collection<String> filters = new ArrayList<String>();
         filters.add("com.xyz");
-        PackageFilter filter = new PackageFilter(filters);
+        PackageFilter filter = PackageFilter.fromNames(filters);
         assertEquals(1, filter.getFilters().size());
+    }
+
+    public void testAccept() {
+        final PackageFilter filter = PackageFilter.fromNames("a").accepting();
+        assertTrue(filter.accept("a"));
+        assertFalse(filter.accept("b"));
     }
 
     private void assertFiltersExist(PackageFilter filter) {

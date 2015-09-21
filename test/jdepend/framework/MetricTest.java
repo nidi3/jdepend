@@ -25,9 +25,7 @@ public class MetricTest extends JDependTestCase {
     protected void setUp() {
         super.setUp();
 
-        PackageFilter filter = new PackageFilter();
-        filter.addPackage("java.*");
-        filter.addPackage("javax.*");
+        PackageFilter filter = PackageFilter.fromProperties().withPackages("java.*", "javax.*");
 
         jdepend = new JDepend(filter);
         jdepend.analyzeInnerClasses(false);
@@ -44,11 +42,9 @@ public class MetricTest extends JDependTestCase {
     }
 
     private void assertAnalyzePackages() {
-
         assertEquals(53, jdepend.countClasses());
 
-        PackageFilter filter = jdepend.getFilter();
-        filter.addPackage("junit.*");
+        PackageFilter filter = jdepend.getFilter().withPackage("junit.*");
 
         jdepend.analyze();
 
@@ -59,7 +55,6 @@ public class MetricTest extends JDependTestCase {
     }
 
     private void assertFrameworkPackage() {
-
         JavaPackage p = jdepend.getPackage("jdepend.framework");
         assertNotNull(p);
 
@@ -74,7 +69,6 @@ public class MetricTest extends JDependTestCase {
     }
 
     private void assertTextUIPackage() {
-
         JavaPackage p = jdepend.getPackage("jdepend.textui");
         assertNotNull(p);
 

@@ -110,7 +110,7 @@ public class JDepend {
     private Collection<String> components;
 
     public JDepend() {
-        this(new PackageFilter());
+        this(PackageFilter.fromProperties());
     }
 
     public JDepend(PackageFilter filter) {
@@ -311,7 +311,7 @@ public class JDepend {
 
     public PackageFilter getFilter() {
         if (filter == null) {
-            filter = new PackageFilter();
+            filter = PackageFilter.fromProperties();
         }
 
         return filter;

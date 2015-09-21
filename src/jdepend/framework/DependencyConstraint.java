@@ -61,16 +61,45 @@ public class DependencyConstraint {
                 : (basePackage + ".");
     }
 
-    public static DependencyConstraint fromFields(Object obj, String basePackage) throws IllegalAccessException {
-        DependencyConstraint constraint = new DependencyConstraint();
-        basePackage = normalize(basePackage);
-        for (Field f : obj.getClass().getDeclaredFields()) {
-            f.setAccessible(true);
-            if (f.getType() == JavaPackage.class) {
-                f.set(obj, constraint.addPackage(basePackage + camelCaseToDotCase(f.getName())));
+    /**
+     * Creates a DependencyConstraint with all fields of a class of type JavaPackage. The names of the fields are used as the names of the packages.
+     * <pre>
+     * class Test{
+     *      void test(){
+     *          class Acme{
+     *              JavaPackage coreUtil;
+     *          }
+     *          Acme acme = new Acme();
+     *          DependencyConstraint dc = DependencyConstraint.fromFields("com", acme);
+     *      }
+     * }
+     * </pre>
+     * In this example, acme.coreUtil would be the package com.acme.core.util.
+     *
+     * @param basePackage
+     * @param objs
+     * @return
+     */
+    public static DependencyConstraint fromFields(String basePackage, Object... objs) {
+        try {
+            DependencyConstraint constraint = new DependencyConstraint();
+            basePackage = normalize(basePackage);
+            for (Object obj : objs) {
+                for (Field f : obj.getClass().getDeclaredFields()) {
+                    f.setAccessible(true);
+                    if (f.getType() == JavaPackage.class) {
+                        f.set(obj, constraint.addPackage(basePackage + camelCaseToDotCase(obj.getClass().getSimpleName()) + "." + camelCaseToDotCase(f.getName())));
+                    }
+                }
             }
+            return constraint;
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Could not access field", e);
         }
-        return constraint;
+    }
+
+    public static DependencyConstraint fromFields(Object... objs) {
+        return fromFields("", objs);
     }
 
     private static String camelCaseToDotCase(String s) {
@@ -78,7 +107,10 @@ public class DependencyConstraint {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (Character.isUpperCase(c)) {
-                res.append(".").append(Character.toLowerCase(c));
+                if (i > 0) {
+                    res.append(".");
+                }
+                res.append(Character.toLowerCase(c));
             } else {
                 res.append(c);
             }
