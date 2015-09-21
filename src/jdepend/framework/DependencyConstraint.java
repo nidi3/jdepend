@@ -1,5 +1,6 @@
 package jdepend.framework;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -42,17 +43,54 @@ import java.util.*;
  */
 
 public class DependencyConstraint {
+    private final String basePackage;
+    private final Map<String, JavaPackage> packages;
 
-    private Map<String, JavaPackage> packages;
-
-    public DependencyConstraint() {
+    public DependencyConstraint(String basePackage) {
+        this.basePackage = normalize(basePackage);
         packages = new HashMap<String, JavaPackage>();
     }
 
+    public DependencyConstraint() {
+        this("");
+    }
+
+    private static String normalize(String basePackage) {
+        return basePackage.length() == 0 || basePackage.endsWith(".")
+                ? basePackage
+                : (basePackage + ".");
+    }
+
+    public static DependencyConstraint fromFields(Object obj, String basePackage) throws IllegalAccessException {
+        DependencyConstraint constraint = new DependencyConstraint();
+        basePackage = normalize(basePackage);
+        for (Field f : obj.getClass().getDeclaredFields()) {
+            f.setAccessible(true);
+            if (f.getType() == JavaPackage.class) {
+                f.set(obj, constraint.addPackage(basePackage + camelCaseToDotCase(f.getName())));
+            }
+        }
+        return constraint;
+    }
+
+    private static String camelCaseToDotCase(String s) {
+        final StringBuilder res = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (Character.isUpperCase(c)) {
+                res.append(".").append(Character.toLowerCase(c));
+            } else {
+                res.append(c);
+            }
+        }
+        return res.toString();
+    }
+
     public JavaPackage addPackage(String packageName) {
-        JavaPackage jPackage = packages.get(packageName);
+        final String pack = basePackage + packageName;
+        JavaPackage jPackage = packages.get(pack);
         if (jPackage == null) {
-            jPackage = new JavaPackage(packageName);
+            jPackage = new JavaPackage(pack);
             addPackage(jPackage);
         }
         return jPackage;
@@ -111,7 +149,7 @@ public class DependencyConstraint {
 
     private boolean equalsAfferents(JavaPackage a, JavaPackage b) {
         if (a.equals(b)) {
-            Collection otherAfferents = b.getAfferents();
+            Collection<JavaPackage> otherAfferents = b.getAfferents();
             if (a.getAfferents().size() == otherAfferents.size()) {
                 for (JavaPackage afferent : a.getAfferents()) {
                     if (!otherAfferents.contains(afferent)) {
@@ -125,22 +163,17 @@ public class DependencyConstraint {
     }
 
     private boolean equalsEfferents(JavaPackage a, JavaPackage b) {
-
         if (a.equals(b)) {
-
-            Collection otherEfferents = b.getEfferents();
-
+            Collection<JavaPackage> otherEfferents = b.getEfferents();
             if (a.getEfferents().size() == otherEfferents.size()) {
                 for (JavaPackage efferent : a.getEfferents()) {
                     if (!otherEfferents.contains(efferent)) {
                         return false;
                     }
                 }
-
                 return true;
             }
         }
-
         return false;
     }
 }
