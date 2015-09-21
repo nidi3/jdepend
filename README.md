@@ -5,6 +5,7 @@ Changes from the original: [![Build Status](https://travis-ci.org/nidi3/jdepend.
  - Add hamcrest matchers
  - Use generics
  - Mavenize
+ - New APIs for DependencyConstraint and PackageFilter
 
 ```
 
