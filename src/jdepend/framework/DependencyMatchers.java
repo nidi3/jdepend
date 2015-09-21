@@ -19,6 +19,14 @@ public class DependencyMatchers {
     private DependencyMatchers() {
     }
 
+    public static Matcher<JDepend> matchesPackages(Object... objs) {
+        return matches(DependencyConstraint.fromFields(objs));
+    }
+
+    public static Matcher<JDepend> matchesPackages(String basePackage, Object... objs) {
+        return matches(DependencyConstraint.fromFields(basePackage, objs));
+    }
+
     public static Matcher<JDepend> matches(final DependencyConstraint constraint) {
         return new TypeSafeMatcher<JDepend>() {
             private DependencyConstraint.MatchResult result;

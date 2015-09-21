@@ -35,7 +35,7 @@ public class ExampleTest extends TestCase {
             fail("Property 'jdepend.home' not defined");
         }
 
-        PackageFilter filter = PackageFilter.fromProperties().withPackages("java.*", "javax.*");
+        PackageFilter filter = PackageFilter.fromProperties().excluding("java.*", "javax.*");
         jdepend = new JDepend(filter);
 
         String classesDir = jdependHomeDirectory + File.separator + "target/classes";

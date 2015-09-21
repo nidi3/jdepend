@@ -25,7 +25,7 @@ public class MetricTest extends JDependTestCase {
     protected void setUp() {
         super.setUp();
 
-        PackageFilter filter = PackageFilter.fromProperties().withPackages("java.*", "javax.*");
+        PackageFilter filter = PackageFilter.fromProperties().excluding("java.*", "javax.*");
 
         jdepend = new JDepend(filter);
         jdepend.analyzeInnerClasses(false);
@@ -42,9 +42,9 @@ public class MetricTest extends JDependTestCase {
     }
 
     private void assertAnalyzePackages() {
-        assertEquals(53, jdepend.countClasses());
+        assertEquals(54, jdepend.countClasses());
 
-        PackageFilter filter = jdepend.getFilter().withPackage("junit.*");
+        PackageFilter filter = jdepend.getFilter().excluding("junit.*");
 
         jdepend.analyze();
 
@@ -59,12 +59,12 @@ public class MetricTest extends JDependTestCase {
         assertNotNull(p);
 
         assertEquals(27, p.getConcreteClassCount());
-        assertEquals(5, p.getAbstractClassCount());
+        assertEquals(6, p.getAbstractClassCount());
         assertEquals(3, p.afferentCoupling());
         assertEquals(6, p.efferentCoupling());
-        assertEquals(format(0.16f), format(p.abstractness()));
+        assertEquals(format(0.18f), format(p.abstractness()));
         assertEquals(format(0.67f), format(p.instability()));
-        assertEquals(format(0.18f), format(p.distance()));
+        assertEquals(format(0.15f), format(p.distance()));
         assertEquals(1, p.getVolatility());
     }
 

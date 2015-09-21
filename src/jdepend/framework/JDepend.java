@@ -325,7 +325,6 @@ public class JDepend {
     }
 
     private void analyzeClass(JavaClass clazz) {
-
         String packageName = clazz.getPackageName();
 
         if (!getFilter().accept(packageName)) {

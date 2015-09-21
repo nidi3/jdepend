@@ -2,6 +2,9 @@ package jdepend.framework;
 
 import java.io.IOException;
 
+import static jdepend.framework.DependencyMatchers.matchesPackages;
+import static org.junit.Assert.assertThat;
+
 /**
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
@@ -17,7 +20,7 @@ public class ConstraintTest extends JDependTestCase {
 
     protected void setUp() {
         super.setUp();
-        PackageFilter filter = PackageFilter.fromProperties().withPackages("java.*","javax.*");
+        PackageFilter filter = PackageFilter.fromProperties().excluding("java.*", "javax.*");
         jDepend = new JDepend(filter);
     }
 
@@ -75,23 +78,23 @@ public class ConstraintTest extends JDependTestCase {
         class Junit {
             JavaPackage framework, textui;
         }
-        class Jdepend {
-            JavaPackage framework, textui, xmlui, swingui, frameworkP1, frameworkP2, frameworkP3;
-        }
         class Org {
             JavaPackage junit, junitRunners, hamcrest;
         }
         final Junit junit = new Junit();
-        final Jdepend jdepend = new Jdepend();
         final Org org = new Org();
-        DependencyConstraint constraint = DependencyConstraint.fromFields(junit, jdepend, org);
 
-        jdepend.framework.dependsUpon(junit.framework, org.hamcrest, junit.textui);
-        jdepend.textui.dependsUpon(jdepend.framework);
-        jdepend.xmlui.dependsUpon(jdepend.framework, jdepend.textui);
-        jdepend.swingui.dependsUpon(jdepend.framework);
-        jdepend.framework.dependsUpon(jdepend.frameworkP1, jdepend.frameworkP2, jdepend.frameworkP3, org.junitRunners, org.junit);
+        class Jdepend implements DependencyDefiner {
+            JavaPackage framework, textui, xmlui, swingui, frameworkP1, frameworkP2, frameworkP3;
 
-        assertEquals(true, jDepend.dependencyMatch(constraint));
+            public void dependUpon() {
+                framework.dependsUpon(junit.framework, org.hamcrest, junit.textui);
+                textui.dependsUpon(framework);
+                xmlui.dependsUpon(framework, textui);
+                swingui.dependsUpon(framework);
+                framework.dependsUpon(frameworkP1, frameworkP2, frameworkP3, org.junitRunners, org.junit);
+            }
+        }
+        assertThat(jDepend, matchesPackages(junit, org, new Jdepend()));
     }
 }

@@ -88,8 +88,12 @@ public class DependencyConstraint {
                 for (Field f : obj.getClass().getDeclaredFields()) {
                     f.setAccessible(true);
                     if (f.getType() == JavaPackage.class) {
-                        f.set(obj, constraint.addPackage(basePackage + camelCaseToDotCase(obj.getClass().getSimpleName()) + "." + camelCaseToDotCase(f.getName())));
+                        final String start = basePackage + camelCaseToDotCase(obj.getClass().getSimpleName());
+                        f.set(obj, constraint.addPackage(start + (f.getName().equals("self") ? "" : ("." + camelCaseToDotCase(f.getName())))));
                     }
+                }
+                if (obj instanceof DependencyDefiner) {
+                    ((DependencyDefiner) obj).dependUpon();
                 }
             }
             return constraint;
