@@ -31,7 +31,7 @@ public class EfferentNode extends PackageNode {
      *
      * @param parent   Parent package node.
      * @param jPackage Java package.
-     * @return A non-null <code>PackageNode</code.
+     * @return A non-null <code>PackageNode</code>.
      */
     protected PackageNode makeNode(PackageNode parent, JavaPackage jPackage) {
         return new EfferentNode(parent, jPackage);
@@ -50,9 +50,10 @@ public class EfferentNode extends PackageNode {
     /**
      * Indicates whether the specified package should be displayed as a child of
      * this node.
-     * <p/>
+     * <p>
      * Efferent packages without classes are never shown at the root level to
      * exclude non-analyzed packages.
+     * </p>
      *
      * @param jPackage Package to test.
      * @return <code>true</code> to display the package; <code>false</code>

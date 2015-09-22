@@ -10,9 +10,7 @@ import java.util.*;
  * This class is useful for writing package dependency assertions (e.g. JUnit).
  * For example, the following JUnit test will ensure that the 'ejb' and 'web'
  * packages only depend upon the 'util' package, and no others:
- * <p>
- * <blockquote>
- * <p/>
+ * </p>
  * <pre>
  *
  * public void testDependencyConstraint() {
@@ -34,14 +32,10 @@ import java.util.*;
  *             .match(analyzedPackages));
  * }
  * </pre>
- * <p/>
- * </blockquote>
- * </p>
  *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
-
 public class DependencyConstraint {
     private final String basePackage;
     private final Map<String, JavaPackage> packages;

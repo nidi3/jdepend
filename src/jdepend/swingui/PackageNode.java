@@ -79,7 +79,7 @@ public abstract class PackageNode {
      *
      * @param parent   Parent package node.
      * @param jPackage Java package.
-     * @return A non-null <code>PackageNode</code.
+     * @return A non-null <code>PackageNode</code>.
      */
     protected abstract PackageNode makeNode(PackageNode parent, JavaPackage jPackage);
 
@@ -97,7 +97,7 @@ public abstract class PackageNode {
      *
      * @param jPackage Package to test.
      * @return <code>true</code> to display the package; <code>false</code>
-     * otherwise.
+     * otherwise.§
      */
     public boolean isChild(JavaPackage jPackage) {
         return true;

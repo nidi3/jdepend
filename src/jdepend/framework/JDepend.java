@@ -6,7 +6,6 @@ import java.util.*;
 /**
  * The <code>JDepend</code> class analyzes directories of Java class files
  * and generates the following metrics for each Java package.
- * <p>
  * <ul>
  * <li>Afferent Coupling (Ca)
  * <p>
@@ -68,9 +67,8 @@ import java.util.*;
  * </p>
  * <p>
  * Example API use:
- * <p>
+ * </p>
  * <blockquote>
- * <p/>
  * <pre>
  * JDepend jdepend = new JDepend();
  * jdepend.addDirectory(&quot;/path/to/classes&quot;);
@@ -88,9 +86,7 @@ import java.util.*;
  *     boolean b = jPackage.containsCycle();
  * }
  * </pre>
- * <p/>
  * </blockquote>
- * </p>
  * <p>
  * This class is the data model used by the <code>jdepend.textui.JDepend</code>
  * and <code>jdepend.swingui.JDepend</code> views.

@@ -84,9 +84,10 @@ public class JavaPackage {
     /**
      * Collects all the packages participating in a package dependency cycle
      * which originates from this package.
-     * <p/>
+     * <p>
      * This is a more exhaustive search than that employed by
      * <code>collectCycle</code>.
+     * </p>
      *
      * @param list Collecting object to be populated with the list of
      *             JavaPackage instances in a cycle.

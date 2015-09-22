@@ -3,9 +3,10 @@ package jdepend.framework;
 /**
  * The <code>ParserListener</code> interface defines a listener
  * notified upon the completion of parsing events.
- * <p/>
+ * <p>
  * Implementers of this interface register for notification using
  * the <code>JDepend.addParseListener()</code> method.
+ * </p>
  *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.

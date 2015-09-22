@@ -31,7 +31,7 @@ public class AfferentNode extends PackageNode {
      *
      * @param parent   Parent package node.
      * @param jPackage Java package.
-     * @return A non-null <code>PackageNode</code.
+     * @return A non-null <code>PackageNode</code>.
      */
     protected PackageNode makeNode(PackageNode parent, JavaPackage jPackage) {
         return new AfferentNode(parent, jPackage);
