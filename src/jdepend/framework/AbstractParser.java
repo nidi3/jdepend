@@ -22,7 +22,7 @@ public abstract class AbstractParser {
 
 
     public AbstractParser() {
-        this(PackageFilter.fromProperties());
+        this(PackageFilter.all().excludingProperties());
     }
 
     public AbstractParser(PackageFilter filter) {
@@ -54,7 +54,7 @@ public abstract class AbstractParser {
 
     protected PackageFilter getFilter() {
         if (filter == null) {
-            setFilter(PackageFilter.fromProperties());
+            setFilter(PackageFilter.all().excludingProperties());
         }
         return filter;
     }

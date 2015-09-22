@@ -25,7 +25,7 @@ public class MetricTest extends JDependTestCase {
     protected void setUp() {
         super.setUp();
 
-        PackageFilter filter = PackageFilter.fromProperties().excluding("java.*", "javax.*");
+        PackageFilter filter = PackageFilter.all().excludingProperties().excluding("java.*", "javax.*");
 
         jdepend = new JDepend(filter);
         jdepend.analyzeInnerClasses(false);

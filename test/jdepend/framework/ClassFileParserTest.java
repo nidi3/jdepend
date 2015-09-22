@@ -20,7 +20,7 @@ public class ClassFileParserTest extends JDependTestCase {
 
     protected void setUp() {
         super.setUp();
-        PackageFilter filter = PackageFilter.empty();
+        PackageFilter filter = PackageFilter.all();
         parser = new ClassFileParser(filter);
     }
 

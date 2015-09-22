@@ -49,7 +49,7 @@ public class ClassFileParser extends AbstractParser {
 
 
     public ClassFileParser() {
-        this(PackageFilter.fromProperties());
+        this(PackageFilter.all().excludingProperties());
     }
 
     public ClassFileParser(PackageFilter filter) {

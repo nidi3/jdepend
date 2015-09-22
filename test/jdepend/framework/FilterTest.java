@@ -27,34 +27,35 @@ public class FilterTest extends JDependTestCase {
     }
 
     public void testDefault() {
-        PackageFilter filter = PackageFilter.fromProperties();
-        assertEquals(5, filter.getExcludes().size());
+        PackageFilter filter = PackageFilter.all().excludingProperties();
+        assertEquals(5, filter.getFilters().size());
         assertFiltersExist(filter);
     }
 
     public void testFile() throws IOException {
         String filterFile = getTestDataDir() + "jdepend.properties";
-        PackageFilter filter = PackageFilter.fromFile(new File(filterFile));
-        assertEquals(5, filter.getExcludes().size());
+        PackageFilter filter = PackageFilter.all().excludingFile(new File(filterFile));
+        assertEquals(5, filter.getFilters().size());
         assertFiltersExist(filter);
     }
 
     public void testCollection() throws IOException {
         Collection<String> filters = Arrays.asList("java.*", "javax.*", "sun.*", "com.sun.*", "com.xyz.tests.*");
-        PackageFilter filter = PackageFilter.empty().excluding(filters);
-        assertEquals(5, filter.getExcludes().size());
+        PackageFilter filter = PackageFilter.all().excluding(filters);
+        assertEquals(5, filter.getFilters().size());
         assertFiltersExist(filter);
     }
 
     public void testCollectionSubset() {
         Collection<String> filters = new ArrayList<String>();
         filters.add("com.xyz");
-        PackageFilter filter = PackageFilter.empty().excluding(filters);
-        assertEquals(1, filter.getExcludes().size());
+        PackageFilter filter = PackageFilter.all().excluding(filters);
+        assertEquals(1, filter.getFilters().size());
     }
 
     public void testAccept() {
-        final PackageFilter filter = PackageFilter.empty().including("a.b").excluding("a","a.b.c");
+        final PackageFilter filter = PackageFilter.all()
+                .excluding("a.b.c").including("a.b").excluding("a");
         assertFalse(filter.accept("a"));
         assertTrue(filter.accept("a.b"));
         assertTrue(filter.accept("a.b.d"));

@@ -2,55 +2,89 @@ package jdepend.framework;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
  * The <code>PackageFilter</code> class is used to filter imported
  * package names.
- * <p/>
- * The default filter contains any packages declared in the
- * <code>jdepend.properties</code> file, if such a file exists
- * either in the user's home directory or somewhere in the classpath.
+ * A Package Filter is constructed like this:
+ * <pre>PackageFilter filter = PackageFilter.all().excluding(...).including(...)...</pre>
+ * The filter executes all excluding/including entries in the order they are defined.
+ * The first one that matches is used as the result of the filter.
+ * If no entry matches, the Filter accepts a package.
  *
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
 
 public class PackageFilter {
+    private final Collection<Filter> filters;
 
-    private final Collection<String> excludes;
-    private final Collection<String> includes;
-
-    private PackageFilter(Collection<String> excludes, Collection<String> includes) {
-        this.excludes = excludes;
-        this.includes = includes;
+    private PackageFilter(Collection<Filter> filters) {
+        this.filters = filters;
     }
 
     private PackageFilter() {
-        this(new ArrayList<String>(), new ArrayList<String>());
+        this(new ArrayList<Filter>());
     }
 
-    public static PackageFilter empty() {
+    public static PackageFilter all() {
         return new PackageFilter();
     }
 
     /**
-     * Constructs a <code>PackageFilter</code> instance containing
-     * the filters specified in the <code>jdepend.properties</code> file,
-     * if it exists.
+     * Add a <code>Filter</code> rejecting the entries specified in the
+     * <code>jdepend.properties</code> file, if it exists.
      */
-    public static PackageFilter fromProperties() {
-        return new PackageFilter().excluding(new PropertyConfigurator().getFilteredPackages());
+    public PackageFilter excludingProperties() {
+        return excluding(new PropertyConfigurator().getFilteredPackages());
     }
 
     /**
-     * Constructs a <code>PackageFilter</code> instance containing
-     * the filters contained in the specified file.
+     * Add a <code>Filter</code> accepting the entries specified in the
+     * <code>jdepend.properties</code> file, if it exists.
+     */
+    public PackageFilter includingProperties() {
+        return including(new PropertyConfigurator().getFilteredPackages());
+    }
+
+    /**
+     * Add a <code>Filter</code> rejecting the entries in the specified properties file.
      *
      * @param f Property file.
      */
-    public static PackageFilter fromFile(File f) {
-        return new PackageFilter().excluding(new PropertyConfigurator(f).getFilteredPackages());
+    public PackageFilter excludingFile(File f) {
+        return excluding(new PropertyConfigurator(f).getFilteredPackages());
+    }
+
+    /**
+     * Add a <code>Filter</code> accepting the entries in the specified properties file.
+     *
+     * @param f Property file.
+     */
+    public PackageFilter including(File f) {
+        return including(new PropertyConfigurator(f).getFilteredPackages());
+    }
+
+    public PackageFilter excluding(String... packageNames) {
+        return add(Arrays.asList(packageNames), false);
+    }
+
+    public PackageFilter excluding(Collection<String> packageNames) {
+        return add(packageNames, false);
+    }
+
+    public PackageFilter excludingRest() {
+        return excluding("");
+    }
+
+    public PackageFilter including(String... packageNames) {
+        return add(Arrays.asList(packageNames), true);
+    }
+
+    public PackageFilter including(Collection<String> packageNames) {
+        return add(packageNames, true);
     }
 
     /**
@@ -61,64 +95,40 @@ public class PackageFilter {
      * <code>false</code> otherwise.
      */
     public boolean accept(String packageName) {
-        int longestInclude = 0, longestExclude = 0;
-        for (String include : includes) {
-            if (packageName.startsWith(include)) {
-                longestInclude = Math.max(longestInclude, include.length());
+        for (Filter filter : filters) {
+            if (packageName.startsWith(filter.name)) {
+                return filter.include;
             }
         }
-        for (String exclude : excludes) {
-            if (packageName.startsWith(exclude)) {
-                longestExclude = Math.max(longestExclude, exclude.length());
-            }
-        }
-        return longestInclude >= longestExclude;
+        return true;
     }
 
-    public PackageFilter excluding(String... packageNames) {
-        for (String packageName : packageNames) {
-            add(excludes, packageName);
+    private PackageFilter add(Collection<String> packageNames, boolean include) {
+        for (final String packageName : packageNames) {
+            add(packageName, include);
         }
         return this;
     }
 
-    public PackageFilter excluding(Collection<String> packageNames) {
-        for (String packageName : packageNames) {
-            add(excludes, packageName);
-        }
-        return this;
-    }
-
-    public PackageFilter including(String... packageNames) {
-        for (String packageName : packageNames) {
-            add(includes, packageName);
-        }
-        return this;
-    }
-
-    public PackageFilter including(Collection<String> packageNames) {
-        for (String packageName : packageNames) {
-            add(includes, packageName);
-        }
-        return this;
-    }
-
-    private PackageFilter add(Collection<String> list, String packageName) {
+    private PackageFilter add(String packageName, boolean include) {
         if (packageName.endsWith("*")) {
             packageName = packageName.substring(0, packageName.length() - 1);
         }
-
-        if (packageName.length() > 0) {
-            list.add(packageName);
-        }
+        filters.add(new Filter(packageName, include));
         return this;
     }
 
-    public Collection<String> getExcludes() {
-        return excludes;
+    public Collection<Filter> getFilters() {
+        return filters;
     }
 
-    public Collection<String> getIncludes() {
-        return includes;
+    public static class Filter {
+        public final String name;
+        public final boolean include;
+
+        public Filter(String name, boolean include) {
+            this.name = name;
+            this.include = include;
+        }
     }
 }
