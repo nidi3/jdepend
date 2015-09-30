@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>jdepend</artifactId>
-    <version>2.9.5</version>
+    <version>2.9.6-SNAPSHOT</version>
 
     <name>${project.artifactId}</name>
     <description>A fork to the jdepend project which applies bugfixes.</description>
@@ -20,7 +20,7 @@
         <connection>scm:git:https://github.com/nidi3/jdepend</connection>
         <developerConnection>scm:git:https://github.com/nidi3/jdepend</developerConnection>
         <url>https://github.com/nidi3/jdepend</url>
-      <tag>jdepend-2.9.5</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <properties>
