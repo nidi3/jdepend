@@ -102,15 +102,24 @@ public class DependencyConstraint {
 
     private static String camelCaseToDotCase(String s) {
         final StringBuilder res = new StringBuilder();
+        final boolean dollarMode = s.contains("$");
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            if (Character.isUpperCase(c)) {
-                if (i > 0) {
+            if (dollarMode) {
+                if (c == '$' && i > 0) {
                     res.append(".");
+                } else {
+                    res.append(c);
                 }
-                res.append(Character.toLowerCase(c));
             } else {
-                res.append(c);
+                if (Character.isUpperCase(c)) {
+                    if (i > 0) {
+                        res.append(".");
+                    }
+                    res.append(Character.toLowerCase(c));
+                } else {
+                    res.append(c);
+                }
             }
         }
         return res.toString();
