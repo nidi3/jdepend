@@ -113,8 +113,6 @@ public class ExampleTest {
     public void dependencyConstraint() {
         DependencyConstraint constraint = new DependencyConstraint();
 
-        JavaPackage junitframework = constraint.addPackage("junit.framework");
-        JavaPackage junitui = constraint.addPackage("junit.textui");
         JavaPackage framework = constraint.addPackage("jdepend.framework");
         JavaPackage text = constraint.addPackage("jdepend.textui");
         JavaPackage xml = constraint.addPackage("jdepend.xmlui");
@@ -126,7 +124,7 @@ public class ExampleTest {
         JavaPackage orgjunit = constraint.addPackage("org.junit");
         JavaPackage orghamcrest = constraint.addPackage("org.hamcrest");
 
-        framework.dependsUpon(junitframework, orghamcrest, junitui);
+        framework.dependsUpon(orghamcrest);
         text.dependsUpon(framework);
         xml.dependsUpon(framework, text);
         swing.dependsUpon(framework);

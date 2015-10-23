@@ -76,7 +76,7 @@ public class ConstraintTest extends JDependTestCase {
         jDepend.analyze();
 
         class Junit {
-            JavaPackage framework, textui;
+            JavaPackage framework;
         }
         class Org {
             JavaPackage junit, junitRunners, hamcrest;
@@ -88,7 +88,7 @@ public class ConstraintTest extends JDependTestCase {
             JavaPackage framework, textui, xmlui, swingui, frameworkP1, frameworkP2, frameworkP3;
 
             public void dependUpon() {
-                framework.dependsUpon(junit.framework, org.hamcrest, junit.textui);
+                framework.dependsUpon(org.hamcrest);
                 textui.dependsUpon(framework);
                 xmlui.dependsUpon(framework, textui);
                 swingui.dependsUpon(framework);
