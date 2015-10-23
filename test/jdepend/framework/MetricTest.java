@@ -1,7 +1,12 @@
 package jdepend.framework;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.text.NumberFormat;
+
+import static org.junit.Assert.*;
 
 /**
  * @author <b>Mike Clark</b>
@@ -18,24 +23,16 @@ public class MetricTest extends JDependTestCase {
         formatter.setMaximumFractionDigits(2);
     }
 
-    public MetricTest(String name) {
-        super(name);
-    }
-
-    protected void setUp() {
-        super.setUp();
-
+    @Before
+    public void setUp() {
         PackageFilter filter = PackageFilter.all().excludingProperties().excluding("java.*", "javax.*");
 
         jdepend = new JDepend(filter);
         jdepend.analyzeInnerClasses(false);
     }
 
-    protected void tearDown() {
-        super.tearDown();
-    }
-
-    public void testAnalyzeClassFiles() throws IOException {
+    @Test
+    public void analyzeClassFiles() throws IOException {
         jdepend.addDirectory(getBuildDir());
         jdepend.addDirectory(getTestBuildDir());
         assertAnalyzePackages();
@@ -83,7 +80,6 @@ public class MetricTest extends JDependTestCase {
     }
 
     private void assertSwingUIPackage() {
-
         JavaPackage p = jdepend.getPackage("jdepend.swingui");
         assertNotNull(p);
 
@@ -98,7 +94,6 @@ public class MetricTest extends JDependTestCase {
     }
 
     private void assertXmlUIPackage() {
-
         JavaPackage p = jdepend.getPackage("jdepend.xmlui");
         assertNotNull(p);
 
@@ -112,8 +107,8 @@ public class MetricTest extends JDependTestCase {
         assertEquals(1, p.getVolatility());
     }
 
-    public void testConfiguredVolatility() throws IOException {
-
+    @Test
+    public void configuredVolatility() throws IOException {
         jdepend.addDirectory(getBuildDir());
 
         JavaPackage pkg = new JavaPackage("jdepend.swingui");

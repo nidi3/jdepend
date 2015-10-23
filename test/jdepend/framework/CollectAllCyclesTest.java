@@ -1,7 +1,11 @@
 package jdepend.framework;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author <b>Mike Clark</b>
@@ -9,13 +13,8 @@ import java.util.List;
  */
 
 public class CollectAllCyclesTest extends JDependTestCase {
-
-    public CollectAllCyclesTest(String name) {
-        super(name);
-    }
-
-    public void testNoCycles() {
-
+    @Test
+    public void noCycles() {
         JavaPackage a = new JavaPackage("A");
         JavaPackage b = new JavaPackage("B");
 
@@ -32,8 +31,8 @@ public class CollectAllCyclesTest extends JDependTestCase {
         assertListEquals(bCycles, new String[]{});
     }
 
-    public void test2Node1BranchCycle() {
-
+    @Test
+    public void node1BranchCycle2() {
         JavaPackage a = new JavaPackage("A");
         JavaPackage b = new JavaPackage("B");
 
@@ -51,8 +50,8 @@ public class CollectAllCyclesTest extends JDependTestCase {
         assertListEquals(bCycles, new String[]{"B", "A", "B" });
     }
 
-    public void test3Node1BranchCycle() {
-
+    @Test
+    public void node1BranchCycle3() {
         JavaPackage a = new JavaPackage("A");
         JavaPackage b = new JavaPackage("B");
         JavaPackage c = new JavaPackage("C");
@@ -78,8 +77,8 @@ public class CollectAllCyclesTest extends JDependTestCase {
         assertListEquals(cCycles, new String[]{"C", "A", "B", "C" });
     }
 
-    public void test3Node1BranchSubCycle() {
-
+    @Test
+    public void node1BranchSubCycle3() {
         JavaPackage a = new JavaPackage("A");
         JavaPackage b = new JavaPackage("B");
         JavaPackage c = new JavaPackage("C");
@@ -104,8 +103,8 @@ public class CollectAllCyclesTest extends JDependTestCase {
         assertListEquals(cCycles, new String[]{"C", "B", "C" });
     }
 
-    public void test3Node2BranchCycle() {
-
+    @Test
+    public void node2BranchCycle3() {
         JavaPackage a = new JavaPackage("A");
         JavaPackage b = new JavaPackage("B");
         JavaPackage c = new JavaPackage("C");
@@ -132,8 +131,8 @@ public class CollectAllCyclesTest extends JDependTestCase {
         assertListEquals(cCycles, new String[]{"C", "A", "B", "A", "C" });
     }
 
-    public void test5Node2BranchCycle() {
-
+    @Test
+    public void node2BranchCycle5() {
         JavaPackage a = new JavaPackage("A");
         JavaPackage b = new JavaPackage("B");
         JavaPackage c = new JavaPackage("C");
@@ -175,7 +174,6 @@ public class CollectAllCyclesTest extends JDependTestCase {
     }
 
     protected void assertListEquals(List<JavaPackage> list, String names[]) {
-
         assertEquals(names.length, list.size());
 
         for (int i = 0; i < names.length; i++) {

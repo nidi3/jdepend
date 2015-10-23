@@ -1,15 +1,18 @@
 package jdepend.framework;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
 
 import java.io.File;
+
+import static org.junit.Assert.fail;
 
 /**
  * @author <b>Mike Clark</b>
  * @author Clarkware Consulting, Inc.
  */
 
-public class JDependTestCase extends TestCase {
+public class JDependTestCase {
 
     private String homeDir;
     private String testDir;
@@ -19,12 +22,8 @@ public class JDependTestCase extends TestCase {
     private String packageSubDir;
     private String originalUserHome;
 
-
-    public JDependTestCase(String name) {
-        super(name);
-    }
-
-    protected void setUp() {
+    @Before
+    public void start() {
         System.setProperty("jdepend.home", ".");
 
         homeDir = System.getProperty("jdepend.home");
@@ -34,19 +33,14 @@ public class JDependTestCase extends TestCase {
         homeDir = homeDir + File.separator;
         testDir = homeDir + File.separator + "test" + File.separator;
         testDataDir = testDir + "data" + File.separator;
-//        buildDir = homeDir;
-//        testBuildDir = homeDir+"build"+File.separator;
         buildDir = homeDir + "target/classes" + File.separator;
         testBuildDir = homeDir + "target/test-classes" + File.separator;
-        packageSubDir = "jdepend" + File.separator +
-                "framework" + File.separator;
+        packageSubDir = "jdepend" + File.separator + "framework" + File.separator;
         originalUserHome = System.getProperty("user.home");
     }
 
-    public void testDummy() {
-    }
-
-    protected void tearDown() {
+    @After
+    public void end() {
         System.setProperty("user.home", originalUserHome);
     }
 

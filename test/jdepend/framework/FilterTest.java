@@ -1,10 +1,15 @@
 package jdepend.framework;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+
+import static org.junit.Assert.*;
 
 /**
  * @author <b>Mike Clark</b>
@@ -13,49 +18,45 @@ import java.util.Collection;
 
 public class FilterTest extends JDependTestCase {
 
-    public FilterTest(String name) {
-        super(name);
-    }
-
-    protected void setUp() {
-        super.setUp();
+    @Before
+    public void setUp() {
         System.setProperty("user.home", getTestDataDir());
     }
 
-    protected void tearDown() {
-        super.tearDown();
-    }
-
-    public void testDefault() {
+    @Test
+    public void defaul() {
         PackageFilter filter = PackageFilter.all().excludingProperties();
         assertEquals(5, filter.getFilters().size());
         assertFiltersExist(filter);
     }
 
-    public void testFile() throws IOException {
+    @Test
+    public void file() throws IOException {
         String filterFile = getTestDataDir() + "jdepend.properties";
         PackageFilter filter = PackageFilter.all().excludingFile(new File(filterFile));
         assertEquals(5, filter.getFilters().size());
         assertFiltersExist(filter);
     }
 
-    public void testCollection() throws IOException {
+    @Test
+    public void collection() throws IOException {
         Collection<String> filters = Arrays.asList("java.*", "javax.*", "sun.*", "com.sun.*", "com.xyz.tests.*");
         PackageFilter filter = PackageFilter.all().excluding(filters);
         assertEquals(5, filter.getFilters().size());
         assertFiltersExist(filter);
     }
 
-    public void testCollectionSubset() {
+    @Test
+    public void collectionSubset() {
         Collection<String> filters = new ArrayList<String>();
         filters.add("com.xyz");
         PackageFilter filter = PackageFilter.all().excluding(filters);
         assertEquals(1, filter.getFilters().size());
     }
 
-    public void testAccept() {
-        final PackageFilter filter = PackageFilter.all()
-                .excluding("a.b.c").including("a.b").excluding("a");
+    @Test
+    public void accept() {
+        final PackageFilter filter = PackageFilter.all().excluding("a.b.c").including("a.b").excluding("a");
         assertFalse(filter.accept("a"));
         assertTrue(filter.accept("a.b"));
         assertTrue(filter.accept("a.b.d"));

@@ -1,10 +1,14 @@
 package jdepend.framework;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * The <code>ExampleTest</code> is an example <code>TestCase</code>
@@ -18,18 +22,14 @@ import java.util.Collection;
  * @author Clarkware Consulting, Inc.
  */
 
-public class ExampleTest extends TestCase {
+public class ExampleTest {
 
     private JDepend jdepend;
 
     public String jdependHomeDirectory;
 
-    public ExampleTest(String name) {
-        super(name);
-    }
-
-    protected void setUp() throws IOException {
-
+    @Before
+    public void setUp() throws IOException {
         jdependHomeDirectory = System.getProperty("jdepend.home");
         if (jdependHomeDirectory == null) {
             fail("Property 'jdepend.home' not defined");
@@ -49,8 +49,8 @@ public class ExampleTest extends TestCase {
      * Tests the conformance of a single package to a distance
      * from the main sequence (D) within a tolerance.
      */
-    public void testOnePackageDistance() {
-
+    @Test
+    public void onePackageDistance() {
         double ideal = 0.0;
         double tolerance = 0.8;
 
@@ -58,30 +58,28 @@ public class ExampleTest extends TestCase {
 
         JavaPackage p = jdepend.getPackage("jdepend.framework");
 
-        assertEquals("Distance exceeded: " + p.getName(),
-                ideal, p.distance(), tolerance);
+        assertEquals("Distance exceeded: " + p.getName(), ideal, p.distance(), tolerance);
     }
 
     /**
      * Tests that a single package does not contain any
      * package dependency cycles.
      */
-    public void testOnePackageHasNoCycles() {
-
+    @Test
+    public void onePackageHasNoCycles() {
         jdepend.analyze();
 
         JavaPackage p = jdepend.getPackage("jdepend.framework");
 
-        assertEquals("Cycles exist: " + p.getName(),
-                false, p.containsCycle());
+        assertEquals("Cycles exist: " + p.getName(), false, p.containsCycle());
     }
 
     /**
      * Tests the conformance of all analyzed packages to a
      * distance from the main sequence (D) within a tolerance.
      */
-    public void testAllPackagesDistance() {
-
+    @Test
+    public void allPackagesDistance() {
         double ideal = 0.0;
         double tolerance = 1.0;
 
@@ -97,8 +95,8 @@ public class ExampleTest extends TestCase {
      * Tests that a package dependency cycle does not exist
      * for any of the analyzed packages.
      */
-    public void testAllPackagesHaveNoCycles() {
-
+    @Test
+    public void allPackagesHaveNoCycles() {
         Collection packages = jdepend.analyze();
 
         assertEquals("Cycles exist", false, jdepend.containsCycles());
@@ -111,8 +109,8 @@ public class ExampleTest extends TestCase {
      * Fails if any package dependency other than those declared
      * in the dependency constraints are detected.
      */
-    public void testDependencyConstraint() {
-
+    @Test
+    public void dependencyConstraint() {
         DependencyConstraint constraint = new DependencyConstraint();
 
         JavaPackage junitframework = constraint.addPackage("junit.framework");
@@ -137,9 +135,5 @@ public class ExampleTest extends TestCase {
         jdepend.analyze();
 
         assertEquals("Constraint mismatch", true, jdepend.dependencyMatch(constraint));
-    }
-
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(ExampleTest.class);
     }
 }

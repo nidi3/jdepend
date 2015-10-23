@@ -1,8 +1,14 @@
 package jdepend.framework;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author <b>Mike Clark</b>
@@ -14,53 +20,28 @@ public class JarFileParserTest extends JDependTestCase {
     private File jarFile;
     private File zipFile;
 
-    public JarFileParserTest(String name) {
-        super(name);
-    }
-
-    protected void setUp() {
-        super.setUp();
-
+    @Before
+    public void setUp() {
         jarFile = new File(getTestDataDir() + "test.jar");
         zipFile = new File(getTestDataDir() + "test.zip");
     }
 
-    protected void tearDown() {
-        super.tearDown();
-    }
-
-    public void testInvalidJarFile() throws IOException {
-
+    @Test(expected = IOException.class)
+    public void invalidJarFile() throws IOException {
         JavaClassBuilder builder = new JavaClassBuilder();
         File bogusFile = new File(getTestDataDir() + "bogus.jar");
-
-        try {
-
-            builder.buildClasses(bogusFile);
-            fail("Should raise IOException");
-
-        } catch (IOException expected) {
-            assertTrue(true);
-        }
+        builder.buildClasses(bogusFile);
     }
 
+    @Test(expected = IOException.class)
     public void testInvalidZipFile() throws IOException {
-
         JavaClassBuilder builder = new JavaClassBuilder();
         File bogusFile = new File(getTestDataDir() + "bogus.zip");
-
-        try {
-
-            builder.buildClasses(bogusFile);
-            fail("Should raise IOException");
-
-        } catch (IOException expected) {
-            assertTrue(true);
-        }
+        builder.buildClasses(bogusFile);
     }
 
-    public void testJarFile() throws IOException {
-
+    @Test
+    public void jarFile() throws IOException {
         JavaClassBuilder builder = new JavaClassBuilder();
 
         Collection classes = builder.buildClasses(jarFile);
@@ -70,8 +51,8 @@ public class JarFileParserTest extends JDependTestCase {
         assertInnerClassesExist(classes);
     }
 
-    public void testJarFileWithoutInnerClasses() throws IOException {
-
+    @Test
+    public void jarFileWithoutInnerClasses() throws IOException {
         FileManager fm = new FileManager();
         fm.acceptInnerClasses(false);
 
@@ -83,8 +64,8 @@ public class JarFileParserTest extends JDependTestCase {
         assertClassesExist(classes);
     }
 
-    public void testZipFile() throws IOException {
-
+    @Test
+    public void zipFile() throws IOException {
         JavaClassBuilder builder = new JavaClassBuilder();
 
         Collection classes = builder.buildClasses(zipFile);
@@ -94,8 +75,8 @@ public class JarFileParserTest extends JDependTestCase {
         assertInnerClassesExist(classes);
     }
 
-    public void testZipFileWithoutInnerClasses() throws IOException {
-
+    @Test
+    public void zipFileWithoutInnerClasses() throws IOException {
         FileManager fm = new FileManager();
         fm.acceptInnerClasses(false);
 
@@ -107,8 +88,8 @@ public class JarFileParserTest extends JDependTestCase {
         assertClassesExist(classes);
     }
 
-    public void testCountClasses() throws IOException {
-
+    @Test
+    public void countClasses() throws IOException {
         JDepend jdepend = new JDepend();
         jdepend.addDirectory(getTestDataDir());
 
@@ -120,16 +101,12 @@ public class JarFileParserTest extends JDependTestCase {
     }
 
     private void assertClassesExist(Collection classes) {
-        assertTrue(classes.contains(new JavaClass(
-                "jdepend.framework.ExampleAbstractClass")));
-        assertTrue(classes.contains(new JavaClass(
-                "jdepend.framework.ExampleInterface")));
-        assertTrue(classes.contains(new JavaClass(
-                "jdepend.framework.ExampleConcreteClass")));
+        assertTrue(classes.contains(new JavaClass("jdepend.framework.ExampleAbstractClass")));
+        assertTrue(classes.contains(new JavaClass("jdepend.framework.ExampleInterface")));
+        assertTrue(classes.contains(new JavaClass("jdepend.framework.ExampleConcreteClass")));
     }
 
     private void assertInnerClassesExist(Collection classes) {
-        assertTrue(classes.contains(new JavaClass(
-                "jdepend.framework.ExampleConcreteClass$ExampleInnerClass")));
+        assertTrue(classes.contains(new JavaClass("jdepend.framework.ExampleConcreteClass$ExampleInnerClass")));
     }
 }

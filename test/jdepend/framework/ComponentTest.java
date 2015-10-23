@@ -1,8 +1,14 @@
 package jdepend.framework;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author <b>Mike Clark</b>
@@ -19,22 +25,14 @@ public class ComponentTest extends JDependTestCase {
         formatter.setMaximumFractionDigits(2);
     }
 
-    public ComponentTest(String name) {
-        super(name);
-    }
-
-    protected void setUp() {
-        super.setUp();
+    @Before
+    public void setUp() {
         jdepend = new JDepend();
         jdepend.analyzeInnerClasses(false);
     }
 
-    protected void tearDown() {
-        super.tearDown();
-    }
-
-    public void testJDependComponents() throws IOException {
-
+    @Test
+    public void jDependComponents() throws IOException {
         jdepend.setComponents("jdepend,junit,java,javax");
 
         jdepend.addDirectory(getBuildDir());

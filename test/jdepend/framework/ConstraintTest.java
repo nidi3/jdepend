@@ -1,8 +1,12 @@
 package jdepend.framework;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.IOException;
 
 import static jdepend.framework.DependencyMatchers.matchesPackages;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -14,18 +18,14 @@ public class ConstraintTest extends JDependTestCase {
 
     private JDepend jDepend;
 
-    public ConstraintTest(String name) {
-        super(name);
-    }
-
-    protected void setUp() {
-        super.setUp();
+    @Before
+    public void setUp() {
         PackageFilter filter = PackageFilter.all().excludingProperties().excluding("java.*", "javax.*");
         jDepend = new JDepend(filter);
     }
 
-    public void testMatchPass() {
-
+    @Test
+    public void matchPass() {
         DependencyConstraint constraint = new DependencyConstraint();
 
         JavaPackage expectedA = constraint.addPackage("A");
@@ -44,8 +44,8 @@ public class ConstraintTest extends JDependTestCase {
         assertEquals(true, jDepend.dependencyMatch(constraint));
     }
 
-    public void testMatchFail() {
-
+    @Test
+    public void matchFail() {
         DependencyConstraint constraint = new DependencyConstraint();
 
         JavaPackage expectedA = constraint.addPackage("A");
@@ -68,8 +68,8 @@ public class ConstraintTest extends JDependTestCase {
         assertEquals(false, jDepend.dependencyMatch(constraint));
     }
 
-    public void testJDependConstraints() throws IOException {
-
+    @Test
+    public void jDependConstraints() throws IOException {
         jDepend.addDirectory(getBuildDir());
         jDepend.addDirectory(getTestBuildDir());
 

@@ -1,8 +1,13 @@
 package jdepend.framework;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+
+import static org.junit.Assert.*;
 
 /**
  * @author <b>Mike Clark</b>
@@ -11,28 +16,20 @@ import java.util.Collection;
 
 public class PropertyConfiguratorTest extends JDependTestCase {
 
-    public PropertyConfiguratorTest(String name) {
-        super(name);
-    }
-
-    protected void setUp() {
-        super.setUp();
-
+    @Before
+    public void setUp() {
         System.setProperty("user.home", getTestDataDir());
     }
 
-    protected void tearDown() {
-        super.tearDown();
-    }
-
-    public void testDefaultFilters() {
+    @Test
+    public void defaultFilters() {
         PropertyConfigurator c = new PropertyConfigurator();
         assertFiltersExist(c.getFilteredPackages());
         assertFalse(c.getAnalyzeInnerClasses());
     }
 
-    public void testFiltersFromFile() throws IOException {
-
+    @Test
+    public void filtersFromFile() throws IOException {
         String file = getTestDataDir() + "jdepend.properties";
 
         PropertyConfigurator c = new PropertyConfigurator(new File(file));
@@ -50,7 +47,8 @@ public class PropertyConfiguratorTest extends JDependTestCase {
         assertTrue(filters.contains("com.xyz.tests.*"));
     }
 
-    public void testDefaultPackages() throws IOException {
+    @Test
+    public void defaultPackages() throws IOException {
         JDepend j = new JDepend();
 
         JavaPackage pkg = j.getPackage("com.xyz.a.neverchanges");
