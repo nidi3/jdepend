@@ -6,6 +6,7 @@ Changes from the original: [![Build Status](https://travis-ci.org/nidi3/jdepend.
  - Use generics
  - Mavenize
  - New APIs for DependencyConstraint and PackageFilter
+ - Parse generic signatures in class files
 
 ```
 
