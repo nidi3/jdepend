@@ -176,5 +176,14 @@ public class ClassFileParserTest extends JDependTestCase {
     public void exampleClassFile2() throws IOException {
         parser.parse(ClassFileParser.class.getResourceAsStream("/data/example_class2.bin"));
     }
+
+    @Test
+    public void genericParameters() throws IOException {
+        final JavaClass generic = parser.parse(new File(getTestBuildDir() + getPackageSubDir() + "p4/GenericParameters.class"));
+        final JavaClass subGeneric = parser.parse(new File(getTestBuildDir() + getPackageSubDir() + "p4/SubGenericParameters.class"));
+
+        assertEquals(11,generic.getImportedPackages().size());
+        assertEquals(1,subGeneric.getImportedPackages().size());
+    }
 }
 

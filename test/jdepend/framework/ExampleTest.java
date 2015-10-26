@@ -121,6 +121,17 @@ public class ExampleTest {
         JavaPackage jdependframeworkp2 = constraint.addPackage("jdepend.framework.p2");
         JavaPackage jdependframeworkp3 = constraint.addPackage("jdepend.framework.p3");
         JavaPackage jdependframeworkp1 = constraint.addPackage("jdepend.framework.p1");
+        JavaPackage jdependframeworkp4 = constraint.addPackage("jdepend.framework.p4");
+        JavaPackage jdependframeworkp4p1 = constraint.addPackage("jdepend.framework.p4.p1");
+        JavaPackage jdependframeworkp4p2 = constraint.addPackage("jdepend.framework.p4.p2");
+        JavaPackage jdependframeworkp4p3 = constraint.addPackage("jdepend.framework.p4.p3");
+        JavaPackage jdependframeworkp4p4 = constraint.addPackage("jdepend.framework.p4.p5");
+        JavaPackage jdependframeworkp4p5 = constraint.addPackage("jdepend.framework.p4.p4");
+        JavaPackage jdependframeworkp4p6 = constraint.addPackage("jdepend.framework.p4.p6");
+        JavaPackage jdependframeworkp4p7 = constraint.addPackage("jdepend.framework.p4.p7");
+        JavaPackage jdependframeworkp4p8 = constraint.addPackage("jdepend.framework.p4.p8");
+        JavaPackage jdependframeworkp4p9 = constraint.addPackage("jdepend.framework.p4.p9");
+        JavaPackage jdependframeworkp4p10 = constraint.addPackage("jdepend.framework.p4.p10");
         JavaPackage orgjunit = constraint.addPackage("org.junit");
         JavaPackage orghamcrest = constraint.addPackage("org.hamcrest");
 
@@ -129,6 +140,8 @@ public class ExampleTest {
         xml.dependsUpon(framework, text);
         swing.dependsUpon(framework);
         framework.dependsUpon(jdependframeworkp1, jdependframeworkp2, jdependframeworkp3, orgjunitrunners, orgjunit);
+        jdependframeworkp4.dependsUpon(jdependframeworkp4p1,jdependframeworkp4p2,jdependframeworkp4p4,jdependframeworkp4p5,
+                jdependframeworkp4p6,jdependframeworkp4p7,jdependframeworkp4p8,jdependframeworkp4p9,jdependframeworkp4p10);
 
         jdepend.analyze();
 

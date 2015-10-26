@@ -85,7 +85,10 @@ public class ConstraintTest extends JDependTestCase {
         final Org org = new Org();
 
         class Jdepend implements DependencyDefiner {
-            JavaPackage framework, textui, xmlui, swingui, frameworkP1, frameworkP2, frameworkP3;
+            JavaPackage framework, textui, xmlui, swingui,
+                    frameworkP1, frameworkP2, frameworkP3, frameworkP4,
+                    frameworkP4P1, frameworkP4P2, frameworkP4P3, frameworkP4P4, frameworkP4P5,
+                    frameworkP4P6, frameworkP4P7, frameworkP4P8, frameworkP4P9, frameworkP4P10;
 
             public void dependUpon() {
                 framework.dependsUpon(org.hamcrest);
@@ -93,6 +96,8 @@ public class ConstraintTest extends JDependTestCase {
                 xmlui.dependsUpon(framework, textui);
                 swingui.dependsUpon(framework);
                 framework.dependsUpon(frameworkP1, frameworkP2, frameworkP3, org.junitRunners, org.junit);
+                frameworkP4.dependsUpon(frameworkP4P1, frameworkP4P2, frameworkP4P4, frameworkP4P5,
+                        frameworkP4P6, frameworkP4P7, frameworkP4P8, frameworkP4P9, frameworkP4P10);
             }
         }
         assertThat(jDepend, matchesPackages(junit, org, new Jdepend()));

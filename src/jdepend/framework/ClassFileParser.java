@@ -35,6 +35,10 @@ public class ClassFileParser extends AbstractParser {
     private static final int ACC_INTERFACE = 0x200;
     private static final int ACC_ABSTRACT = 0x400;
 
+    private static final String ATTR_ANNOTATIONS = "RuntimeVisibleAnnotations";
+    private static final String ATTR_SIGNATURE = "Signature";
+    private static final String ATTR_SOURCE = "SourceFile";
+
     private String fileName;
     private String className;
     private String superClassName;
@@ -128,6 +132,8 @@ public class ClassFileParser extends AbstractParser {
         methods = parseMethods();
 
         parseAttributes();
+
+        addSignatureReferences();
 
         addClassConstantReferences();
 
@@ -314,8 +320,11 @@ public class ClassFileParser extends AbstractParser {
         int attributesCount = in.readUnsignedShort();
         for (int a = 0; a < attributesCount; a++) {
             AttributeInfo attribute = parseAttribute();
-            if ("RuntimeVisibleAnnotations".equals(attribute.name)) {
+            if (ATTR_ANNOTATIONS.equals(attribute.name)) {
                 result._runtimeVisibleAnnotations = attribute;
+            }
+            if (ATTR_SIGNATURE.equals(attribute.name)) {
+                result._signature = attribute;
             }
         }
 
@@ -331,7 +340,7 @@ public class ClassFileParser extends AbstractParser {
 
             // Section 4.7.7 of VM Spec - Class File Format
             if (attributes[i].getName() != null) {
-                if (attributes[i].getName().equals("SourceFile")) {
+                if (attributes[i].getName().equals(ATTR_SOURCE)) {
                     byte[] b = attributes[i].getValue();
                     int b0 = b[0] < 0 ? b[0] + 256 : b[0];
                     int b1 = b[1] < 0 ? b[1] + 256 : b[1];
@@ -370,6 +379,33 @@ public class ClassFileParser extends AbstractParser {
         return constantPool[entryIndex];
     }
 
+    private void addSignatureReferences() throws IOException {
+        for (AttributeInfo attr : attributes) {
+            if (attr.getName().equals(ATTR_SIGNATURE)) {
+                String name = toUTF8(u2(attr.getValue(), 0));
+                for (final String pack : SignatureParser.parseClassSignature(name).getPackages()) {
+                    addImport(pack);
+                }
+            }
+        }
+        for (FieldOrMethodInfo info : fields) {
+            if (info._signature != null) {
+                String name = toUTF8(u2(info._signature.getValue(), 0));
+                for (final String pack : SignatureParser.parseFieldSignature(name).getPackages()) {
+                    addImport(pack);
+                }
+            }
+        }
+        for (FieldOrMethodInfo info : methods) {
+            if (info._signature != null) {
+                String name = toUTF8(u2(info._signature.getValue(), 0));
+                for (final String pack : SignatureParser.parseMethodSignature(name).getPackages()) {
+                    addImport(pack);
+                }
+            }
+        }
+    }
+
     private void addClassConstantReferences() throws IOException {
         for (int j = 1; j < constantPool.length; j++) {
             if (constantPool[j].getTag() == CONSTANT_CLASS) {
@@ -387,7 +423,7 @@ public class ClassFileParser extends AbstractParser {
 
     private void addAnnotationsReferences() throws IOException {
         for (int j = 1; j < attributes.length; j++) {
-            if ("RuntimeVisibleAnnotations".equals(attributes[j].name)) {
+            if (ATTR_ANNOTATIONS.equals(attributes[j].name)) {
                 addAnnotationReferences(attributes[j]);
             }
         }
@@ -622,6 +658,7 @@ public class ClassFileParser extends AbstractParser {
         private final int _descriptorIndex;
 
         private AttributeInfo _runtimeVisibleAnnotations;
+        private AttributeInfo _signature;
 
         FieldOrMethodInfo(int accessFlags, int nameIndex, int descriptorIndex) {
             _accessFlags = accessFlags;
