@@ -1,7 +1,5 @@
 package jdepend.framework.rule;
 
-import jdepend.framework.DependencyMap;
-
 /**
  *
  */
