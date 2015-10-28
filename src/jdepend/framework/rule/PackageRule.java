@@ -1,10 +1,9 @@
 package jdepend.framework.rule;
 
+import jdepend.framework.JavaClass;
 import jdepend.framework.JavaPackage;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -62,7 +61,7 @@ public class PackageRule {
             for (JavaPackage mustPack : findPackages(packages, must)) {
                 for (JavaPackage thisPack : thisPackages) {
                     if (!hasEfferent(thisPack, mustPack.getName())) {
-                        result.missing.with(thisPack.getName(), mustPack.getName());
+                        addDependency(result.missing, thisPack, mustPack);
                     }
                 }
             }
@@ -72,7 +71,7 @@ public class PackageRule {
                 for (JavaPackage mustNotPack : findPackages(packages, mustNot)) {
                     for (JavaPackage thisPack : thisPackages) {
                         if (hasEfferent(thisPack, mustNotPack.getName()) && !hasAnyMatch(mustNotPack, mayDepend)) {
-                            result.denied.with(thisPack.getName(), mustNotPack.getName());
+                            addDependency(result.denied, thisPack, mustNotPack);
                         }
                     }
                 }
@@ -82,17 +81,21 @@ public class PackageRule {
                 for (JavaPackage dep : thisPack.getEfferents()) {
                     final boolean allowed = hasAnyMatch(dep, mustDepend) || hasAnyMatch(dep, mayDepend);
                     final boolean mustNot = hasAnyMatch(dep, mustNotDepend);
-                    if (!mustNot && allowed){
-                        result.allowed.with(thisPack.getName(),dep.getName());
+                    if (!mustNot && allowed) {
+                        addDependency(result.allowed, thisPack, dep);
                     }
                     if (mustNot || !allowed) {
-                        result.denied.with(thisPack.getName(), dep.getName());
+                        addDependency(result.denied, thisPack, dep);
                     }
                 }
             }
         }
 
         return result;
+    }
+
+    private void addDependency(DependencyMap dependencyMap, JavaPackage from, JavaPackage to) {
+        dependencyMap.with(from.getName(), findClasses(from, to), to.getName());
     }
 
     private boolean hasAnyMatch(JavaPackage pack, List<String> names) {
@@ -122,5 +125,19 @@ public class PackageRule {
 
     private boolean hasEfferent(JavaPackage pack, String name) {
         return !findPackages(pack.getEfferents(), name).isEmpty();
+    }
+
+    private boolean hasEfferent(JavaClass jc, String name) {
+        return !findPackages(jc.getImportedPackages(), name).isEmpty();
+    }
+
+    private Set<String> findClasses(JavaPackage from, JavaPackage to) {
+        final Set<String> res = new HashSet<String>();
+        for (JavaClass jc : from.getClasses()) {
+            if (hasEfferent(jc, to.getName())) {
+                res.add(jc.getName());
+            }
+        }
+        return res;
     }
 }

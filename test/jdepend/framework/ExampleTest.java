@@ -35,7 +35,7 @@ public class ExampleTest {
             fail("Property 'jdepend.home' not defined");
         }
 
-        PackageFilter filter = PackageFilter.all().excludingProperties().excluding("java.*", "javax.*");
+        PackageFilter filter = PackageFilter.all().excludingProperties().excluding("java.*", "javax.*").excluding("jdepend.framework.rule");
         jdepend = new JDepend(filter);
 
         String classesDir = jdependHomeDirectory + File.separator + "target/classes";
@@ -114,7 +114,6 @@ public class ExampleTest {
         DependencyConstraint constraint = new DependencyConstraint();
 
         JavaPackage framework = constraint.addPackage("jdepend.framework");
-        JavaPackage frameworkRule = constraint.addPackage("jdepend.framework.rule");
         JavaPackage text = constraint.addPackage("jdepend.textui");
         JavaPackage xml = constraint.addPackage("jdepend.xmlui");
         JavaPackage swing = constraint.addPackage("jdepend.swingui");
@@ -141,7 +140,6 @@ public class ExampleTest {
         xml.dependsUpon(framework, text);
         swing.dependsUpon(framework);
         framework.dependsUpon(jdependframeworkp1, jdependframeworkp2, jdependframeworkp3, orgjunitrunners, orgjunit);
-        frameworkRule.dependsUpon(orgjunit,framework);
         jdependframeworkp4.dependsUpon(jdependframeworkp4p1,jdependframeworkp4p2,jdependframeworkp4p4,jdependframeworkp4p5,
                 jdependframeworkp4p6,jdependframeworkp4p7,jdependframeworkp4p8,jdependframeworkp4p9,jdependframeworkp4p10);
 

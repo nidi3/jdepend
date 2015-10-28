@@ -20,7 +20,7 @@ public class ConstraintTest extends JDependTestCase {
 
     @Before
     public void setUp() {
-        PackageFilter filter = PackageFilter.all().excludingProperties().excluding("java.*", "javax.*");
+        PackageFilter filter = PackageFilter.all().excludingProperties().excluding("java.*", "javax.*").excluding("jdepend.framework.rule");
         jDepend = new JDepend(filter);
     }
 
@@ -85,14 +85,13 @@ public class ConstraintTest extends JDependTestCase {
         final Org org = new Org();
 
         class Jdepend implements DependencyDefiner {
-            JavaPackage framework,frameworkRule, textui, xmlui, swingui,
+            JavaPackage framework, textui, xmlui, swingui,
                     frameworkP1, frameworkP2, frameworkP3, frameworkP4,
                     frameworkP4P1, frameworkP4P2, frameworkP4P3, frameworkP4P4, frameworkP4P5,
                     frameworkP4P6, frameworkP4P7, frameworkP4P8, frameworkP4P9, frameworkP4P10;
 
             public void dependUpon() {
                 framework.dependsUpon(org.hamcrest);
-                frameworkRule.dependsUpon(org.junit,framework);
                 textui.dependsUpon(framework);
                 xmlui.dependsUpon(framework, textui);
                 swingui.dependsUpon(framework);

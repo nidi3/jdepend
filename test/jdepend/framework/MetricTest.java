@@ -25,7 +25,7 @@ public class MetricTest extends JDependTestCase {
 
     @Before
     public void setUp() {
-        PackageFilter filter = PackageFilter.all().excludingProperties().excluding("java.*", "javax.*");
+        PackageFilter filter = PackageFilter.all().excludingProperties().excluding("java.*", "javax.*").excluding("jdepend.framework.rule.*");
 
         jdepend = new JDepend(filter);
         jdepend.analyzeInnerClasses(false);
@@ -39,7 +39,7 @@ public class MetricTest extends JDependTestCase {
     }
 
     private void assertAnalyzePackages() {
-        assertEquals(71, jdepend.countClasses());
+        assertEquals(84, jdepend.countClasses());
 
         PackageFilter filter = jdepend.getFilter().excluding("junit.*");
 

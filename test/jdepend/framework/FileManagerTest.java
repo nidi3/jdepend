@@ -32,7 +32,7 @@ public class FileManagerTest extends JDependTestCase {
     public void buildDirectory() throws IOException {
         fileManager.addDirectory(getBuildDir());
         fileManager.addDirectory(getTestBuildDir());
-        assertEquals(65, fileManager.extractFiles().size());
+        assertEquals(78, fileManager.extractFiles().size());
     }
 
     @Test(expected = IOException.class)

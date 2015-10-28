@@ -37,6 +37,8 @@ public class DependencyRules {
         return pack;
     }
 
+    //TODO existing packages without rule
+    //TODO detect circles
     public RuleResult analyze(Collection<JavaPackage> testPacks) {
         RuleResult result = new RuleResult();
         for (final PackageRule rule : rules) {

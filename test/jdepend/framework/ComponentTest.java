@@ -27,7 +27,7 @@ public class ComponentTest extends JDependTestCase {
 
     @Before
     public void setUp() {
-        jdepend = new JDepend();
+        jdepend = new JDepend(PackageFilter.all().excluding("jdepend.framework.rule.*"));
         jdepend.analyzeInnerClasses(false);
     }
 

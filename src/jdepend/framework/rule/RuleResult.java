@@ -30,6 +30,18 @@ public class RuleResult {
         allowed.clear();
     }
 
+    public DependencyMap getAllowed() {
+        return allowed;
+    }
+
+    public DependencyMap getMissing() {
+        return missing;
+    }
+
+    public DependencyMap getDenied() {
+        return denied;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

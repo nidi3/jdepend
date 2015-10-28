@@ -1,9 +1,15 @@
 package jdepend.framework.rule;
 
+import jdepend.framework.JDepend;
 import jdepend.framework.JavaPackage;
+import jdepend.framework.PackageFilter;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,6 +17,17 @@ import static org.junit.Assert.assertEquals;
  *
  */
 public class DependencyRulesTest {
+    private static final String BASE = "jdepend.framework.rule.";
+    private Collection<JavaPackage> packages;
+
+    @Before
+    public void analyze() throws IOException {
+        final JDepend jDepend = new JDepend(PackageFilter.all().excluding("java."));
+        jDepend.addDirectory("target/test-classes/jdepend/framework/rule");
+        packages = jDepend.analyze();
+
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void wildcardNotAtEnd() {
         PackageRule.allowAll("a*b");
@@ -24,111 +41,106 @@ public class DependencyRulesTest {
     @Test
     public void allow() {
         final DependencyRules dc = DependencyRules.allowAll();
-        final PackageRule a = dc.addRule("a");
-        final PackageRule b = dc.addRule("b");
-        final PackageRule c = dc.addRule("c");
+        final PackageRule a = dc.addRule(base("a"));
+        final PackageRule b = dc.addRule(base("b"));
+        final PackageRule c = dc.addRule(base("c"));
 
         a.mustDependUpon(b);
         b.mustNotDependUpon(a, c).mayDependUpon(a);
 
-        final JavaPackage ea = new JavaPackage("a");
-        final JavaPackage eb = new JavaPackage("b");
-        final JavaPackage ec = new JavaPackage("c");
-        ea.dependsUpon(ec);
-        eb.dependsUpon(ea, ec);
-        ec.dependsUpon(ea, eb);
-
-        final RuleResult result = dc.analyze(Arrays.asList(ea, eb, ec));
+        final RuleResult result = dc.analyze(packages);
         assertEquals(new RuleResult(
                         new DependencyMap(),
-                        new DependencyMap().with("a", "b"),
-                        new DependencyMap().with("b", "c")),
+                        new DependencyMap().with(base("a"), set(), base("b")),
+                        new DependencyMap().with(base("b"), set(base("b.B1")), base("c"))),
                 result);
     }
+
 
     @Test
     public void deny() {
         final DependencyRules dc = DependencyRules.denyAll();
-        final PackageRule a = dc.addRule("a");
-        final PackageRule b = dc.addRule("b");
-        final PackageRule c = dc.addRule("c");
+        final PackageRule a = dc.addRule(base("a"));
+        final PackageRule b = dc.addRule(base("b"));
+        final PackageRule c = dc.addRule(base("c"));
 
         a.mustDependUpon(b);
         b.mayDependUpon(a, c).mustNotDependUpon(a);
 
-        final JavaPackage ea = new JavaPackage("a");
-        final JavaPackage eb = new JavaPackage("b");
-        final JavaPackage ec = new JavaPackage("c");
-        ea.dependsUpon(ec);
-        eb.dependsUpon(ea, ec);
-        ec.dependsUpon(ea, eb);
-
-        final RuleResult result = dc.analyze(Arrays.asList(ea, eb, ec));
+        final RuleResult result = dc.analyze(packages);
         assertEquals(new RuleResult(
                         new DependencyMap(),
-                        new DependencyMap().with("a", "b"),
-                        new DependencyMap().with("a", "c").with("b", "a").with("c", "a", "b")),
+                        new DependencyMap().with(base("a"), set(), base("b")),
+                        new DependencyMap()
+                                .with(base("a"), set(base("a.A1")), base("c"))
+                                .with(base("b"), set(base("b.B1")), base("a"))
+                                .with(base("c"), set(base("c.C1")), base("a"))
+                                .with(base("c"), set(base("c.C1"), base("c.C2")), base("b"))),
                 result);
     }
 
     @Test
     public void allowWithWildcard() {
         final DependencyRules dc = DependencyRules.allowAll();
-        final PackageRule a1 = dc.addRule("a.1");
-        final PackageRule a = dc.addRule("a.*");
-        final PackageRule b = dc.addRule("b.*");
-        final PackageRule c = dc.addRule("c.*");
+        final PackageRule a1 = dc.addRule(base("a.a"));
+        final PackageRule a = dc.addRule(base("a.*"));
+        final PackageRule b = dc.addRule(base("b.*"));
+        final PackageRule c = dc.addRule(base("c.*"));
 
         a.mustDependUpon(b);
         b.mustNotDependUpon(a, c).mayDependUpon(a1);
 
-        final JavaPackage ea1 = new JavaPackage("a.1");
-        final JavaPackage ea2 = new JavaPackage("a.2");
-        final JavaPackage eb1 = new JavaPackage("b.1");
-        final JavaPackage eb2 = new JavaPackage("b.2");
-        final JavaPackage ec1 = new JavaPackage("c.1");
-        final JavaPackage ec2 = new JavaPackage("c.2");
-        ea1.dependsUpon(eb1); //missing a.1->b.2, a.2->b.1, a.2->b.2
-        eb1.dependsUpon(ea1, ea2); //denied b.1->a.2
-        eb2.dependsUpon(ec1, ec2); //denied b.2->c.1,b.2->c.2
-
-        final RuleResult result = dc.analyze(Arrays.asList(ea1, ea2, eb1, eb2, ec1, ec2));
+        final RuleResult result = dc.analyze(packages);
         assertEquals(new RuleResult(
                         new DependencyMap(),
-                        new DependencyMap().with("a.1", "b.2").with("a.2", "b.1", "b.2"),
-                        new DependencyMap().with("b.1", "a.2").with("b.2", "c.1", "c.2")),
+                        new DependencyMap()
+                                .with(base("a.a"), set(), base("b.b"))
+                                .with(base("a.b"), set(), base("b.a"))
+                                .with(base("a.b"), set(), base("b.b")),
+                        new DependencyMap()
+                                .with(base("b.a"), set(base("b.a.Ba1")), base("a.b"))
+                                .with(base("b.a"), set(base("b.a.Ba2")), base("c.b"))
+                                .with(base("b.a"), set(base("b.a.Ba2")), base("c.a"))
+                                .with(base("b.b"), set(base("b.b.Bb1")), base("c.a"))
+                                .with(base("b.b"), set(base("b.b.Bb1")), base("c.b"))),
                 result);
     }
 
     @Test
     public void denyWithWildcard() {
         final DependencyRules dc = DependencyRules.denyAll();
-        final PackageRule a1 = dc.addRule("a.1");
-        final PackageRule a = dc.addRule("a.*");
-        final PackageRule b = dc.addRule("b.*");
-        final PackageRule c = dc.addRule("c.*");
+        final PackageRule a1 = dc.addRule(base("a.a"));
+        final PackageRule a = dc.addRule(base("a.*"));
+        final PackageRule b = dc.addRule(base("b.*"));
+        final PackageRule c = dc.addRule(base("c.*"));
 
         a.mustDependUpon(b);
         b.mayDependUpon(a, c).mustNotDependUpon(a1);
 
-        final JavaPackage ea1 = new JavaPackage("a.1");
-        final JavaPackage ea2 = new JavaPackage("a.2");
-        final JavaPackage eb1 = new JavaPackage("b.1");
-        final JavaPackage eb2 = new JavaPackage("b.2");
-        final JavaPackage ec1 = new JavaPackage("c.1");
-        final JavaPackage ec2 = new JavaPackage("c.2");
-        //constraint a1 denies a.1->b.1, but a.mustDependUpon(b) overrules this
-        ea1.dependsUpon(eb1); //missing a.1->b.2, a.2->b.1, a.2->b.2,
-        eb1.dependsUpon(ea1, ea2, ec1, ec2); //denied b.1->a.1
-        ec1.dependsUpon(ea1, eb1); //denied c.1->a.1,c.1->b.1
-
-
-        final RuleResult result = dc.analyze(Arrays.asList(ea1, ea2, eb1, eb2, ec1, ec2));
+        final RuleResult result = dc.analyze(packages);
         assertEquals(new RuleResult(
                         new DependencyMap(),
-                        new DependencyMap().with("a.1", "b.2").with("a.2", "b.1", "b.2"),
-                        new DependencyMap().with("b.1", "a.1").with("c.1", "a.1", "b.1")),
+                        new DependencyMap()
+                                .with(base("a.a"), set(), base("b.b"))
+                                .with(base("a.b"), set(), base("b.a"))
+                                .with(base("a.b"), set(), base("b.b")),
+                        new DependencyMap()
+                                .with(base("b.a"), set(base("b.a.Ba1")), base("a.a"))
+                                .with(base("c.a"), set(base("c.a.Ca1")), base("a.a"))
+                                .with(base("c.a"), set(base("c.a.Ca1")), base("b.a"))),
                 result);
+    }
+
+    private String base(String s) {
+        return BASE + s;
+    }
+
+    private Set<String> set(String... ss) {
+        final Set<String> res = new HashSet<String>();
+        for (String s : ss) {
+            res.add(s);
+        }
+        return res;
     }
 
 }
