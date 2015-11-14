@@ -39,7 +39,7 @@ public class MetricTest extends JDependTestCase {
     }
 
     private void assertAnalyzePackages() {
-        assertEquals(84, jdepend.countClasses());
+        assertEquals(85, jdepend.countClasses());
 
         PackageFilter filter = jdepend.getFilter().excluding("junit.*");
 

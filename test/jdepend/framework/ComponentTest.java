@@ -52,7 +52,7 @@ public class ComponentTest extends JDependTestCase {
     private void assertJDependPackage() {
         JavaPackage p = jdepend.getPackage("jdepend");
         assertEquals("jdepend", p.getName());
-        assertEquals(53, p.getConcreteClassCount());
+        assertEquals(54, p.getConcreteClassCount());
         assertEquals(10, p.getAbstractClassCount());
         assertEquals(0, p.afferentCoupling());
         assertEquals(5, p.efferentCoupling());
