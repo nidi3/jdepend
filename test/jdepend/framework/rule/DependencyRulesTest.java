@@ -52,7 +52,18 @@ public class DependencyRulesTest {
         a.mustDependUpon(b);
         b.mustNotDependUpon(a, c).mayDependUpon(a);
 
+        class JdependFrameworkRule implements RuleDefiner {
+            PackageRule a, b, c;
+
+            public void defineRules() {
+                a.mustDependUpon(b);
+                b.mustNotDependUpon(a, c).mayDependUpon(a);
+            }
+        }
+        final DependencyRules rules2 = DependencyRules.allowAll().withRules(new JdependFrameworkRule());
+
         final RuleResult result = rules.analyze(packages);
+        assertEquals(result, rules2.analyze(packages));
         assertEquals(new RuleResult(
                         new DependencyMap(),
                         new DependencyMap().with(base("a"), set(), base("b")),
@@ -100,7 +111,7 @@ public class DependencyRulesTest {
                         "jdepend.framework.rule.b ->\n" +
                         "  jdepend.framework.rule.a (by jdepend.framework.rule.b.B1)\n" +
                         "jdepend.framework.rule.c ->\n" +
-                        "  jdepend.framework.rule.a (by jdepend.framework.rule.c.C1)\n"+
+                        "  jdepend.framework.rule.a (by jdepend.framework.rule.c.C1)\n" +
                         "  jdepend.framework.rule.b (by jdepend.framework.rule.c.C1, jdepend.framework.rule.c.C2)\n",
                 rules);
     }
@@ -117,6 +128,16 @@ public class DependencyRulesTest {
         b.mustNotDependUpon(a, c).mayDependUpon(a1);
 
         final RuleResult result = rules.analyze(packages);
+        final DependencyRules rules2 = DependencyRules.allowAll().withRules("jdepend.framework.rule", new RuleDefiner() {
+            PackageRule aA, a_, b_, c_;
+
+            @Override
+            public void defineRules() {
+                a_.mustDependUpon(b_);
+                b_.mustNotDependUpon(a_, c_).mayDependUpon(aA);
+            }
+        });
+        assertEquals(result, rules2.analyze(packages));
         assertEquals(new RuleResult(
                         new DependencyMap(),
                         new DependencyMap()

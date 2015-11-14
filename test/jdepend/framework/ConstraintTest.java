@@ -1,11 +1,15 @@
 package jdepend.framework;
 
+import jdepend.framework.rule.DependencyRules;
+import jdepend.framework.rule.EmptyRuleDefiner;
+import jdepend.framework.rule.PackageRule;
+import jdepend.framework.rule.RuleDefiner;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 
-import static jdepend.framework.DependencyMatchers.matchesPackages;
+import static jdepend.framework.rule.RuleMatchers.matches;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -75,31 +79,31 @@ public class ConstraintTest extends JDependTestCase {
 
         jDepend.analyze();
 
-        class Junit {
-            JavaPackage framework;
+        class Junit extends EmptyRuleDefiner{
+            PackageRule framework;
         }
-        class Org {
-            JavaPackage junit, junitRunners, hamcrest;
+        class Org extends EmptyRuleDefiner{
+            PackageRule junit, junitRunners, hamcrest;
         }
         final Junit junit = new Junit();
         final Org org = new Org();
 
-        class Jdepend implements DependencyDefiner {
-            JavaPackage framework, textui, xmlui, swingui,
+        class Jdepend implements RuleDefiner {
+            PackageRule framework, textui, xmlui, swingui,
                     frameworkP1, frameworkP2, frameworkP3, frameworkP4,
                     frameworkP4P1, frameworkP4P2, frameworkP4P3, frameworkP4P4, frameworkP4P5,
                     frameworkP4P6, frameworkP4P7, frameworkP4P8, frameworkP4P9, frameworkP4P10;
 
-            public void dependUpon() {
-                framework.dependsUpon(org.hamcrest);
-                textui.dependsUpon(framework);
-                xmlui.dependsUpon(framework, textui);
-                swingui.dependsUpon(framework);
-                framework.dependsUpon(frameworkP1, frameworkP2, frameworkP3, org.junitRunners, org.junit);
-                frameworkP4.dependsUpon(frameworkP4P1, frameworkP4P2, frameworkP4P4, frameworkP4P5,
+            public void defineRules() {
+                framework.mayDependUpon(org.hamcrest);
+                textui.mayDependUpon(framework);
+                xmlui.mayDependUpon(framework, textui);
+                swingui.mayDependUpon(framework);
+                framework.mayDependUpon(frameworkP1, frameworkP2, frameworkP3, org.junitRunners, org.junit);
+                frameworkP4.mayDependUpon(frameworkP4P1, frameworkP4P2, frameworkP4P4, frameworkP4P5,
                         frameworkP4P6, frameworkP4P7, frameworkP4P8, frameworkP4P9, frameworkP4P10);
             }
         }
-        assertThat(jDepend, matchesPackages(junit, org, new Jdepend()));
+        assertThat(jDepend, matches(DependencyRules.denyAll().withRules(junit, org, new Jdepend())));
     }
 }
