@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static jdepend.framework.rule.RuleMatchers.matches;
+import static jdepend.framework.rule.RuleMatchers.matchesExactly;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -79,13 +79,9 @@ public class ConstraintTest extends JDependTestCase {
 
         jDepend.analyze();
 
-        class Junit extends EmptyRuleDefiner{
-            PackageRule framework;
-        }
-        class Org extends EmptyRuleDefiner{
+        class Org extends EmptyRuleDefiner {
             PackageRule junit, junitRunners, hamcrest;
         }
-        final Junit junit = new Junit();
         final Org org = new Org();
 
         class Jdepend implements RuleDefiner {
@@ -104,6 +100,6 @@ public class ConstraintTest extends JDependTestCase {
                         frameworkP4P6, frameworkP4P7, frameworkP4P8, frameworkP4P9, frameworkP4P10);
             }
         }
-        assertThat(jDepend, matches(DependencyRules.denyAll().withRules(junit, org, new Jdepend())));
+        assertThat(jDepend, matchesExactly(DependencyRules.denyAll().withRules(org, new Jdepend())));
     }
 }

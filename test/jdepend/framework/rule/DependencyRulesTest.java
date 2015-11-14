@@ -13,20 +13,24 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static jdepend.framework.rule.RuleMatchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 /**
  *
  */
 public class DependencyRulesTest {
     private static final String BASE = "jdepend.framework.rule.";
+    private static final Set<String> WILDCARD_UNDEFINED = set("jdepend.framework", "jdepend.framework.rule", base("a"), base("b"), base("c"));
+    private static final Set<String> UNDEFINED = set("jdepend.framework", "jdepend.framework.rule", base("a.a"), base("a.b"), base("b.a"), base("b.b"), base("c.a"), base("c.b"));
     private JDepend jDepend;
     private Collection<JavaPackage> packages;
 
     @Before
     public void analyze() throws IOException {
-        jDepend = new JDepend(PackageFilter.all().excluding("java."));
+        jDepend = new JDepend(PackageFilter.all().excluding("java.").excluding("org"));
         jDepend.addDirectory("target/test-classes/jdepend/framework/rule");
         packages = jDepend.analyze();
 
@@ -40,6 +44,40 @@ public class DependencyRulesTest {
     @Test(expected = IllegalArgumentException.class)
     public void wildcardWithoutPriorDot() {
         PackageRule.allowAll("a*");
+    }
+
+    @Test
+    public void matcherFlags() {
+        final DependencyRules rules = DependencyRules.allowAll();
+        final PackageRule a = rules.addRule(base("a"));
+        final PackageRule d = rules.addRule(base("d"));
+        final Set<String> undefined = new HashSet<String>(UNDEFINED);
+        undefined.addAll(set(base("b"), base("c")));
+
+        final RuleResult result = rules.analyze(packages);
+        assertEquals(new RuleResult(
+                        new DependencyMap(),
+                        new DependencyMap(),
+                        new DependencyMap(),
+                        set(base("d")),
+                        undefined),
+                result);
+
+        assertThat(jDepend,matchesRules(rules));
+
+        assertMatcher("\nDefined, but not existing packages:\n" +
+                        "jdepend.framework.rule.d\n" +
+                        "\nFound packages which are not defined:\n" +
+                        "jdepend.framework, jdepend.framework.rule, jdepend.framework.rule.a.a, jdepend.framework.rule.a.b, jdepend.framework.rule.b, jdepend.framework.rule.b.a, jdepend.framework.rule.b.b, jdepend.framework.rule.c, jdepend.framework.rule.c.a, jdepend.framework.rule.c.b\n",
+                matchesExactly(rules));
+
+        assertMatcher("\nFound packages which are not defined:\n" +
+                        "jdepend.framework, jdepend.framework.rule, jdepend.framework.rule.a.a, jdepend.framework.rule.a.b, jdepend.framework.rule.b, jdepend.framework.rule.b.a, jdepend.framework.rule.b.b, jdepend.framework.rule.c, jdepend.framework.rule.c.a, jdepend.framework.rule.c.b\n",
+                matchesIgnoringNonExisting(rules));
+
+        assertMatcher("\nDefined, but not existing packages:\n" +
+                        "jdepend.framework.rule.d\n",
+                matchesIgnoringUndefined(rules));
     }
 
     @Test
@@ -67,7 +105,9 @@ public class DependencyRulesTest {
         assertEquals(new RuleResult(
                         new DependencyMap(),
                         new DependencyMap().with(base("a"), set(), base("b")),
-                        new DependencyMap().with(base("b"), set(base("b.B1")), base("c"))),
+                        new DependencyMap().with(base("b"), set(base("b.B1")), base("c")),
+                        set(),
+                        UNDEFINED),
                 result);
         assertMatcher("\n" +
                         "Found missing dependencies:\n" +
@@ -77,7 +117,7 @@ public class DependencyRulesTest {
                         "Found forbidden dependencies:\n" +
                         "jdepend.framework.rule.b ->\n" +
                         "  jdepend.framework.rule.c (by jdepend.framework.rule.b.B1)\n",
-                rules);
+                matchesRules(rules));
     }
 
     @Test
@@ -98,7 +138,9 @@ public class DependencyRulesTest {
                                 .with(base("a"), set(base("a.A1")), base("c"))
                                 .with(base("b"), set(base("b.B1")), base("a"))
                                 .with(base("c"), set(base("c.C1")), base("a"))
-                                .with(base("c"), set(base("c.C1"), base("c.C2")), base("b"))),
+                                .with(base("c"), set(base("c.C1"), base("c.C2")), base("b")),
+                        set(),
+                        UNDEFINED),
                 result);
         assertMatcher("\n" +
                         "Found missing dependencies:\n" +
@@ -113,7 +155,7 @@ public class DependencyRulesTest {
                         "jdepend.framework.rule.c ->\n" +
                         "  jdepend.framework.rule.a (by jdepend.framework.rule.c.C1)\n" +
                         "  jdepend.framework.rule.b (by jdepend.framework.rule.c.C1, jdepend.framework.rule.c.C2)\n",
-                rules);
+                matchesRules(rules));
     }
 
     @Test
@@ -149,7 +191,9 @@ public class DependencyRulesTest {
                                 .with(base("b.a"), set(base("b.a.Ba2")), base("c.b"))
                                 .with(base("b.a"), set(base("b.a.Ba2")), base("c.a"))
                                 .with(base("b.b"), set(base("b.b.Bb1")), base("c.a"))
-                                .with(base("b.b"), set(base("b.b.Bb1")), base("c.b"))),
+                                .with(base("b.b"), set(base("b.b.Bb1")), base("c.b")),
+                        set(),
+                        WILDCARD_UNDEFINED),
                 result);
         assertMatcher("\n" +
                         "Found missing dependencies:\n" +
@@ -167,7 +211,7 @@ public class DependencyRulesTest {
                         "jdepend.framework.rule.b.b ->\n" +
                         "  jdepend.framework.rule.c.a (by jdepend.framework.rule.b.b.Bb1)\n" +
                         "  jdepend.framework.rule.c.b (by jdepend.framework.rule.b.b.Bb1)\n",
-                rules);
+                matchesRules(rules));
     }
 
     @Test
@@ -191,7 +235,9 @@ public class DependencyRulesTest {
                         new DependencyMap()
                                 .with(base("b.a"), set(base("b.a.Ba1")), base("a.a"))
                                 .with(base("c.a"), set(base("c.a.Ca1")), base("a.a"))
-                                .with(base("c.a"), set(base("c.a.Ca1")), base("b.a"))),
+                                .with(base("c.a"), set(base("c.a.Ca1")), base("b.a")),
+                        set(),
+                        WILDCARD_UNDEFINED),
                 result);
         assertMatcher("\n" +
                         "Found missing dependencies:\n" +
@@ -207,14 +253,14 @@ public class DependencyRulesTest {
                         "jdepend.framework.rule.c.a ->\n" +
                         "  jdepend.framework.rule.a.a (by jdepend.framework.rule.c.a.Ca1)\n" +
                         "  jdepend.framework.rule.b.a (by jdepend.framework.rule.c.a.Ca1)\n",
-                rules);
+                matchesRules(rules));
     }
 
-    private String base(String s) {
+    private static String base(String s) {
         return BASE + s;
     }
 
-    private Set<String> set(String... ss) {
+    private static Set<String> set(String... ss) {
         final Set<String> res = new HashSet<String>();
         for (String s : ss) {
             res.add(s);
@@ -222,8 +268,7 @@ public class DependencyRulesTest {
         return res;
     }
 
-    private void assertMatcher(String message, DependencyRules rules) {
-        final Matcher<JDepend> matcher = RuleMatchers.matches(rules);
+    private void assertMatcher(String message, Matcher<JDepend> matcher) {
         assertFalse(matcher.matches(jDepend));
         final StringDescription sd = new StringDescription();
         matcher.describeMismatch(jDepend, sd);

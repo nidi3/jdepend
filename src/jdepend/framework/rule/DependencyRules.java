@@ -129,12 +129,23 @@ public class DependencyRules {
         return res.toString();
     }
 
-    //TODO existing packages without rule
     //TODO detect circles
     public RuleResult analyze(Collection<JavaPackage> testPacks) {
         RuleResult result = new RuleResult();
         for (final PackageRule rule : rules) {
             result.merge(rule.analyze(testPacks));
+        }
+        for (final JavaPackage pack : testPacks) {
+            boolean defined = false;
+            for (final PackageRule rule : rules) {
+                if (rule.matches(pack)) {
+                    defined = true;
+                    break;
+                }
+            }
+            if (!defined) {
+                result.undefined.add(pack.getName());
+            }
         }
         result.normalize();
         return result;

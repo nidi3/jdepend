@@ -56,6 +56,9 @@ public class PackageRule {
     public RuleResult analyze(Collection<JavaPackage> packages) {
         final RuleResult result = new RuleResult();
         final List<JavaPackage> thisPackages = findPackages(packages, name);
+        if (thisPackages.isEmpty()) {
+            result.notExisting.add(name);
+        }
 
         for (String must : mustDepend) {
             for (JavaPackage mustPack : findPackages(packages, must)) {
@@ -94,11 +97,11 @@ public class PackageRule {
         return result;
     }
 
-    private void addDependency(DependencyMap dependencyMap, JavaPackage from, JavaPackage to) {
+    private static void addDependency(DependencyMap dependencyMap, JavaPackage from, JavaPackage to) {
         dependencyMap.with(from.getName(), findClasses(from, to), to.getName());
     }
 
-    private boolean hasAnyMatch(JavaPackage pack, List<String> names) {
+    private static boolean hasAnyMatch(JavaPackage pack, List<String> names) {
         for (String name : names) {
             if (matches(pack, name)) {
                 return true;
@@ -107,7 +110,7 @@ public class PackageRule {
         return false;
     }
 
-    private List<JavaPackage> findPackages(Collection<JavaPackage> packages, String name) {
+    private static List<JavaPackage> findPackages(Collection<JavaPackage> packages, String name) {
         final List<JavaPackage> res = new ArrayList<JavaPackage>();
         for (JavaPackage pack : packages) {
             if (matches(pack, name)) {
@@ -117,21 +120,25 @@ public class PackageRule {
         return res;
     }
 
-    private boolean matches(JavaPackage pack, String name) {
+    private static boolean matches(JavaPackage pack, String name) {
         return name.endsWith(".*")
                 ? pack.getName().startsWith(name.substring(0, name.length() - 1))
                 : pack.getName().equals(name);
     }
 
-    private boolean hasEfferent(JavaPackage pack, String name) {
+    boolean matches(JavaPackage pack) {
+        return matches(pack, name);
+    }
+
+    private static boolean hasEfferent(JavaPackage pack, String name) {
         return !findPackages(pack.getEfferents(), name).isEmpty();
     }
 
-    private boolean hasEfferent(JavaClass jc, String name) {
+    private static boolean hasEfferent(JavaClass jc, String name) {
         return !findPackages(jc.getImportedPackages(), name).isEmpty();
     }
 
-    private Set<String> findClasses(JavaPackage from, JavaPackage to) {
+    private static Set<String> findClasses(JavaPackage from, JavaPackage to) {
         final Set<String> res = new HashSet<String>();
         for (JavaClass jc : from.getClasses()) {
             if (hasEfferent(jc, to.getName())) {
