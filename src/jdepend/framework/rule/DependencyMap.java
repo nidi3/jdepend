@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  *
  */
-class DependencyMap {
+public class DependencyMap {
     private final Map<String, Map<String, Set<String>>> map = new HashMap<String, Map<String, Set<String>>>();
 
     public DependencyMap() {
@@ -58,6 +58,10 @@ class DependencyMap {
                 ds.putAll(entry.getValue());
             }
         }
+    }
+
+    public boolean isEmpty() {
+        return map.isEmpty();
     }
 
     public void clear() {
