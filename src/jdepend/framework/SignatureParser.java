@@ -97,17 +97,23 @@ public class SignatureParser {
         read('L');
         final StringBuilder s = new StringBuilder();
         s.append(classIdentifier());
-        while (!is('$') && !is(';') && !is('<')) {
-            s.append('.');
-            read();
-            s.append(classIdentifier());
+        while (!is(';') && !is('<')) {
+            if (is('$')) {
+                read();
+                classIdentifier();
+            } else {
+                s.append('.');
+                read();
+                s.append(classIdentifier());
+            }
         }
         String id = s.toString();
-        if (is('$')) {
-            id = classTypeSignatureSuffix(id);
-        } else {
-            if (is('<')) {
-                typeArguments();
+        if (is('<')) {
+            typeArguments();
+        }
+        if (is('.')) {
+            while (is('.')) {
+                classTypeSignatureSuffix();
             }
         }
         final int pos = id.lastIndexOf('.');
@@ -115,14 +121,12 @@ public class SignatureParser {
         read(';');
     }
 
-    private String classTypeSignatureSuffix(String base) {
-        read('$');
-        final String id = classIdentifier();
-        final String name = base + "$" + id;
+    private void classTypeSignatureSuffix() {
+        read('.');
+        classIdentifier();
         if (is('<')) {
             typeArguments();
         }
-        return name;
     }
 
     private void typeArguments() {
@@ -230,7 +234,7 @@ public class SignatureParser {
 
     private char read(char ch) {
         if (c != ch) {
-            throw new RuntimeException("'" + ch + "' expected [" + s + "]:" + pos);
+            throw new RuntimeException("'" + ch + "' expected in '" + s + "':" + pos);
         }
         return read();
     }
