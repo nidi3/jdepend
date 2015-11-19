@@ -4,9 +4,7 @@ package jdepend.framework.rule;
 import jdepend.framework.JavaPackage;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -129,13 +127,12 @@ public class DependencyRules {
         return res.toString();
     }
 
-    //TODO detect circles
-    public RuleResult analyze(Collection<JavaPackage> testPacks) {
-        RuleResult result = new RuleResult();
+    public RuleResult analyzeRules(Collection<JavaPackage> packs) {
+        final RuleResult result = new RuleResult();
         for (final PackageRule rule : rules) {
-            result.merge(rule.analyze(testPacks));
+            result.merge(rule.analyze(packs));
         }
-        for (final JavaPackage pack : testPacks) {
+        for (final JavaPackage pack : packs) {
             boolean defined = false;
             for (final PackageRule rule : rules) {
                 if (rule.matches(pack)) {
@@ -151,4 +148,78 @@ public class DependencyRules {
         return result;
     }
 
+    public static CycleResult analyzeCycles(Collection<JavaPackage> packs) {
+        return new Tarjan().analyzeCycles(packs);
+    }
+
+    private static class Tarjan {
+        private int index;
+        private final Stack<JavaPackage> s = new Stack<JavaPackage>();
+        private final Map<String, Node> nodes = new HashMap<String, Node>();
+        private final CycleResult result = new CycleResult();
+
+        private static class Node {
+            int index = -1;
+            int lowlink;
+            boolean onStack;
+        }
+
+        public CycleResult analyzeCycles(Collection<JavaPackage> packs) {
+            index = 0;
+            for (JavaPackage pack : packs) {
+                if (node(pack).index < 0) {
+                    strongConnect(pack);
+                }
+            }
+            return result;
+        }
+
+        private Node node(JavaPackage pack) {
+            Node node = nodes.get(pack.getName());
+            if (node == null) {
+                node = new Node();
+                nodes.put(pack.getName(), node);
+            }
+            return node;
+        }
+
+        private void strongConnect(JavaPackage pack) {
+            final Node v = node(pack);
+            v.index = index;
+            v.lowlink = index;
+            index++;
+            s.push(pack);
+            v.onStack = true;
+            for (JavaPackage dep : pack.getEfferents()) {
+                final Node w = node(dep);
+                if (w.index < 0) {
+                    strongConnect(dep);
+                    v.lowlink = Math.min(v.lowlink, w.lowlink);
+                } else if (w.onStack) {
+                    v.lowlink = Math.min(v.lowlink, w.index);
+                }
+            }
+
+            if (v.lowlink == v.index) {
+                final Set<JavaPackage> group = new HashSet<JavaPackage>();
+                JavaPackage w;
+                do {
+                    w = s.pop();
+                    node(w).onStack = false;
+                    group.add(w);
+                } while (!pack.equals(w));
+                if (group.size() > 1) {
+                    final DependencyMap g = new DependencyMap();
+                    for (JavaPackage elem : group) {
+                        for (JavaPackage dep : elem.getEfferents()) {
+                            if (group.contains(dep)) {
+                                g.with(elem, dep);
+                            }
+                        }
+                    }
+                    result.cycles.add(g);
+                }
+            }
+        }
+    }
 }

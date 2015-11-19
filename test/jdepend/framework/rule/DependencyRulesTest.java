@@ -33,7 +33,6 @@ public class DependencyRulesTest {
         jDepend = new JDepend(PackageFilter.all().excluding("java.").excluding("org"));
         jDepend.addDirectory("target/test-classes/jdepend/framework/rule");
         packages = jDepend.analyze();
-
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -54,7 +53,7 @@ public class DependencyRulesTest {
         final Set<String> undefined = new HashSet<String>(UNDEFINED);
         undefined.addAll(set(base("b"), base("c")));
 
-        final RuleResult result = rules.analyze(packages);
+        final RuleResult result = rules.analyzeRules(packages);
         assertEquals(new RuleResult(
                         new DependencyMap(),
                         new DependencyMap(),
@@ -100,8 +99,8 @@ public class DependencyRulesTest {
         }
         final DependencyRules rules2 = DependencyRules.allowAll().withRules(new JdependFrameworkRule());
 
-        final RuleResult result = rules.analyze(packages);
-        assertEquals(result, rules2.analyze(packages));
+        final RuleResult result = rules.analyzeRules(packages);
+        assertEquals(result, rules2.analyzeRules(packages));
         assertEquals(new RuleResult(
                         new DependencyMap(),
                         new DependencyMap().with(base("a"), set(), base("b")),
@@ -130,7 +129,7 @@ public class DependencyRulesTest {
         a.mustDependUpon(b);
         b.mayDependUpon(a, c).mustNotDependUpon(a);
 
-        final RuleResult result = rules.analyze(packages);
+        final RuleResult result = rules.analyzeRules(packages);
         assertEquals(new RuleResult(
                         new DependencyMap(),
                         new DependencyMap().with(base("a"), set(), base("b")),
@@ -169,7 +168,7 @@ public class DependencyRulesTest {
         a.mustDependUpon(b);
         b.mustNotDependUpon(a, c).mayDependUpon(a1);
 
-        final RuleResult result = rules.analyze(packages);
+        final RuleResult result = rules.analyzeRules(packages);
         final DependencyRules rules2 = DependencyRules.allowAll().withRules("jdepend.framework.rule", new RuleDefiner() {
             PackageRule aA, a_, b_, c_;
 
@@ -179,7 +178,7 @@ public class DependencyRulesTest {
                 b_.mustNotDependUpon(a_, c_).mayDependUpon(aA);
             }
         });
-        assertEquals(result, rules2.analyze(packages));
+        assertEquals(result, rules2.analyzeRules(packages));
         assertEquals(new RuleResult(
                         new DependencyMap(),
                         new DependencyMap()
@@ -225,7 +224,7 @@ public class DependencyRulesTest {
         a.mustDependUpon(b);
         b.mayDependUpon(a, c).mustNotDependUpon(a1);
 
-        final RuleResult result = rules.analyze(packages);
+        final RuleResult result = rules.analyzeRules(packages);
         assertEquals(new RuleResult(
                         new DependencyMap(),
                         new DependencyMap()

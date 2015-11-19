@@ -1,17 +1,45 @@
 package jdepend.framework.rule;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import jdepend.framework.JavaClass;
+import jdepend.framework.JavaPackage;
+
+import java.util.*;
 
 /**
  *
  */
 public class DependencyMap {
-    private final Map<String, Map<String, Set<String>>> map = new HashMap<String, Map<String, Set<String>>>();
+    private final Map<String, Map<String, Set<String>>> map = new LinkedHashMap<String, Map<String, Set<String>>>();
 
     public DependencyMap() {
+    }
+
+    public void with(JavaPackage from, JavaPackage to) {
+        with(from.getName(), findClasses(from, to), to.getName());
+    }
+
+    private static Set<String> findClasses(JavaPackage from, JavaPackage to) {
+        final Set<String> res = new HashSet<String>();
+        for (JavaClass jc : from.getClasses()) {
+            if (hasEfferent(jc, to.getName())) {
+                res.add(jc.getName());
+            }
+        }
+        return res;
+    }
+
+    private static boolean hasEfferent(JavaClass jc, String name) {
+        return !selectMatchingPackages(jc.getImportedPackages(), name).isEmpty();
+    }
+
+    static List<JavaPackage> selectMatchingPackages(Collection<JavaPackage> packages, String name) {
+        final List<JavaPackage> res = new ArrayList<JavaPackage>();
+        for (JavaPackage pack : packages) {
+            if (pack.isMatchedBy(name)) {
+                res.add(pack);
+            }
+        }
+        return res;
     }
 
     public DependencyMap with(String from, Set<String> fromClasses, String to) {

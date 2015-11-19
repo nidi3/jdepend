@@ -251,6 +251,12 @@ public class JavaPackage {
         return d * volatility;
     }
 
+    public boolean isMatchedBy(String name) {
+        return name.endsWith(".*")
+                ? getName().startsWith(name.substring(0, name.length() - 1))
+                : getName().equals(name);
+    }
+
     public boolean equals(Object other) {
         if (other instanceof JavaPackage) {
             JavaPackage otherPackage = (JavaPackage) other;
