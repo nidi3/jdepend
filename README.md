@@ -1,3 +1,7 @@
+## This repository is deprecated
+### [code-assert](https://github.com/nidi3/code-assert) has the same functionalities as jdepend, but allows a lot more static code analysis. 
+
+
 Changes from the original: [![Build Status](https://travis-ci.org/nidi3/jdepend.svg?branch=master)](https://travis-ci.org/nidi3/jdepend)
 
  - Fix bug in DependencyConstraint (https://github.com/clarkware/jdepend/issues/5)
